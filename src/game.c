@@ -21,9 +21,9 @@ static void game_age_1(void)
         if (api_isle_owner(map_isles[i]) == me) {
             if (map_proximity[map_isles[i].x][map_isles[i].y] ||
                     fleet_caravels_number >= undicovered)
-                fleet_add_galleon(map_isles[i]);
+                while (fleet_add_galleon(map_isles[i])) ;
             else
-                fleet_add_caravel(map_isles[i]);
+                while (fleet_add_caravel(map_isles[i])) ;
         }
 
     // Caravel movement phase.

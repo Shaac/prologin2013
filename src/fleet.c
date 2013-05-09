@@ -14,16 +14,22 @@ static int fleet_purge(int array [], int size)
     return last_id;
 }
 
-void fleet_add_galleon(struct Position pos)
+bool fleet_add_galleon(struct Position pos)
 {
-    if (api_construct(SHIP_GALLEON, pos) == OK)
+    if (api_construct(SHIP_GALLEON, pos) == OK) {
         fleet_galleons[fleet_galleons_number++] = api_last_id();
+        return true;
+    }
+    return false;
 }
 
-void fleet_add_caravel(struct Position pos)
+bool fleet_add_caravel(struct Position pos)
 {
-    if (api_construct(SHIP_CARAVEL, pos) == OK)
+    if (api_construct(SHIP_CARAVEL, pos) == OK) {
         fleet_caravels[fleet_caravels_number++] = api_last_id();
+        return true;
+    }
+    return false;
 }
 
 void fleet_refresh()
