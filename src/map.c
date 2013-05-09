@@ -121,11 +121,11 @@ int map_undicovered_number()
     return ret;
 }
 
-struct Position map_get_closest_undiscovered(struct Position pos) {
+struct Position map_get_closest_isle(struct Position pos, int id) {
     int min = FIELD_SIZE * FIELD_SIZE;
     struct Position ret = {-1, -1};
     for (int i = 0; i < map_isles_number; i ++)
-        if (api_isle_owner(map_isles[i]) == NO_OWNER &&
+        if (api_isle_owner(map_isles[i]) == id &&
                 !map_danger[map_isles[i].x][map_isles[i].y]) {
             int d = api_distance(map_isles[i], pos);
             if (d < min) {

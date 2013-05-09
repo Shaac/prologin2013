@@ -31,11 +31,13 @@ void map_clean(void);
 int map_undicovered_number(void);
 
 /**
- * @brief Get the closest undiscovered isle.
+ * @brief Get the closest isle from a specifier player.
  *
- * @return The position of the closest undiscovered isle.
+ * @param id The player id.
+ *
+ * @return The position of the closest isle.
  */
-struct Position map_get_closest_undiscovered(struct Position pos);
+struct Position map_get_closest_isle(struct Position pos, int id);
 
 void map_go_to(struct Ship ship, struct Position pos);
 

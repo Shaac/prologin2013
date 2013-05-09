@@ -8,6 +8,7 @@
 #endif // VERBOSE
 
 static int me;      /**< The id affected to me. */
+static int other;   /**< The id affected to the other. */
 static int age = 1; /**< There are different ages (steps) through the game. */
 
 /**
@@ -31,7 +32,7 @@ static void game_age_1(void)
     for (int i = 0; i < fleet_caravels_number; i++) {
         struct Ship ship = api_get_ship(fleet_caravels[i]);
         if (ship.movable) {
-            struct Position p = map_get_closest_undiscovered(ship.pos);
+            struct Position p = map_get_closest_isle(ship.pos, NO_OWNER);
             if (p.x != -1) {
                 map_go_to(ship, p);
                 api_colonize(p);
@@ -39,6 +40,24 @@ static void game_age_1(void)
         }
     }
     // TODO make them flee
+
+    // Galleons movement phase.
+    for (int i = 0; i < fleet_galleons_number; i++) {
+        struct Ship ship = api_get_ship(fleet_galleons[i]);
+        if (ship.movable) {
+            // TODO try to make some free kills
+            // TODO go to caravans too
+            struct Position p = map_get_closest_isle(ship.pos, other);
+            if (p.x != -1)
+                map_go_to(ship, p);
+            else {
+                p = map_get_closest_isle(ship.pos, NO_OWNER);
+                if (p.x != -1)
+                    map_go_to(ship, p);
+            }
+        }
+    }
+    // TODO defend volcanos.
 }
 
 /**
@@ -57,7 +76,8 @@ static void game_age_3(void)
 
 void game_init() {
     map_init();
-    me = api_my_id();
+    me    = api_my_id();
+    other = api_other_id();
 }
 
 void game_play()

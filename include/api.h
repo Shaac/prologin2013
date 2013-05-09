@@ -64,6 +64,11 @@ static inline int api_my_id()
     return mon_joueur();
 }
 
+static inline int api_other_id()
+{
+    return adversaire();
+}
+
 static inline struct Ship_array api_ship_list(int x, int y) {
     bateau_array b = liste_bateaux_position((position) {x, y});
     return (struct Ship_array) {(struct Ship *) b.datas, b.length};
