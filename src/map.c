@@ -24,10 +24,14 @@ static const int ISLE_PROXIMITY = 10;
 static int map_get_owner_id(int x, int y)
 {
     struct Ship_array ships = api_ship_list(x, y);
+    int ret = NO_OWNER;
     for (unsigned int i = 0; i < ships.length; i ++)
-        if (ships.ships[i].type == SHIP_GALLEON)
-            return ships.ships[i].player;
-    return NO_OWNER;
+        if (ships.ships[i].type == SHIP_GALLEON) {
+            ret = ships.ships[i].player;
+            break;
+        }
+    free(ships.ships);
+    return ret;
 }
 
 /**
