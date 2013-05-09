@@ -43,7 +43,6 @@ static int map_get_owner_id(int x, int y)
  * @param y      The position,
  * @param radius The radius.
  */
-#include <stdio.h>
 static void map_fill_surrounding(int **matrix, int x, int y, int radius)
 {
     int i_min = x < radius ? 0 : x - radius;
