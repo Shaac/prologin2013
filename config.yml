@@ -4,6 +4,8 @@ verbose: 3
 clients:
   - ./champion.so
   - ./champion.so
+spectators:
+  - /usr/local/gui/gui.so
 names:
   - Blue ones
   - Red ones
