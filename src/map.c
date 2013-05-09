@@ -10,7 +10,7 @@ struct Position *map_isles;
 int **map_danger;
 int **map_proximity;
 
-static const int ISLE_PROXIMITY = 10;
+static const int ISLE_PROXIMITY = 2 * GALLEON_MOVEMENT;
 
 /**
  * @brief Get the id of the owner of a case, in a military way: the owner is
