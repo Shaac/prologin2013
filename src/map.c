@@ -14,19 +14,21 @@ static const int ISLE_PROXIMITY = 10;
 
 /**
  * @brief Get the id of the owner of a case, in a military way: the owner is
- * the player with galleons on it.
+ * the player with galleons on it. Can also work with only caravels instead
+ * of galeons.
  *
- * @param x The position.
- * @param y The position.
+ * @param x    The position.
+ * @param y    The position.
+ * @param type The type of ship that matters.
  *
  * @return The id of the owner, NO_OWNER if none.
  */
-static int map_get_owner_id(int x, int y)
+static int map_get_owner_id(int x, int y, enum Ship_type type)
 {
     struct Ship_array ships = api_ship_list(x, y);
     int ret = NO_OWNER;
     for (unsigned int i = 0; i < ships.length; i ++)
-        if (ships.ships[i].type == SHIP_GALLEON) {
+        if (ships.ships[i].type == type) {
             ret = ships.ships[i].player;
             break;
         }
@@ -84,7 +86,7 @@ void map_refresh()
         memset(map_danger[i], 0, FIELD_SIZE * sizeof(int));
     for (int x = 0; x < FIELD_SIZE; x++)
         for (int y = 0; y < FIELD_SIZE; y++) {
-            int owner = map_get_owner_id(x, y);
+            int owner = map_get_owner_id(x, y, SHIP_GALLEON);
             if (owner != NO_OWNER && owner != me)
                 map_fill_surrounding(map_danger, x, y, GALLEON_MOVEMENT);
         }
@@ -98,6 +100,12 @@ void map_refresh()
             map_fill_surrounding(map_proximity, map_isles[i].x, map_isles[i].y,
                     ISLE_PROXIMITY);
     }
+    for (int x = 0; x < FIELD_SIZE; x++)
+        for (int y = 0; y < FIELD_SIZE; y++) {
+            int owner = map_get_owner_id(x, y, SHIP_CARAVEL);
+            if (owner != NO_OWNER && owner != me)
+                map_fill_surrounding(map_danger, x, y, CARAVEL_MOVEMENT);
+        }
 }
 
 void map_clean() {
