@@ -60,6 +60,7 @@ static void map_fill_surrounding(int **matrix, int x, int y, int radius)
 void map_init()
 {
     me = api_my_id();
+    // TODO use the APi functions instead
     struct Position buffer [FIELD_SIZE * FIELD_SIZE];
     map_isles_number = 0;
     for (int x = 0; x < FIELD_SIZE; x++)
