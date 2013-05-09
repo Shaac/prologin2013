@@ -47,4 +47,6 @@ struct Position map_get_closest_isle(struct Position pos, int id);
  */
 void map_go_to(struct Ship ship, struct Position pos);
 
+void map_move_to_front(struct Ship ship);
+
 #endif // __MAP_H__

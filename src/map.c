@@ -3,6 +3,10 @@
 #include "map.h"
 #include "game.h"
 
+#ifdef VERBOSE
+#include <stdio.h>
+#endif // VERBOSE
+
 int map_isles_number;
 struct Position *map_isles;
 
@@ -53,7 +57,7 @@ static void map_fill_surrounding(int **matrix, int x, int y, int radius)
     for (int i = i_min; i <= i_max; i++)
         for (int j = j_min; j <= j_max; j++)
             if (abs(i - x) + abs(j - y) <= radius)
-                matrix[i][j]++;
+                matrix[i][j]+= radius + 1 - abs(i - x) - abs(j - y);
 }
 
 void map_init()
@@ -137,6 +141,9 @@ struct Position map_get_closest_isle(struct Position pos, int id) {
 
 void map_go_to(struct Ship ship, struct Position pos)
 {
+#ifdef VERBOSE
+    printf("%d, %d to %d, %d\n", ship.pos.x, ship.pos.y, pos.x, pos.y);
+#endif // VERBOSE
     if (api_move(ship.id, pos) != OK) {
         int movement = ship.type == SHIP_GALLEON ? GALLEON_MOVEMENT :
             CARAVEL_MOVEMENT;
@@ -150,4 +157,27 @@ void map_go_to(struct Ship ship, struct Position pos)
         struct Position p = {ship.pos.x + dx, ship.pos.y + dy};
         api_move(ship.id, p);
     }
+}
+
+void map_move_to_front(struct Ship ship)
+{
+    int max = 0;
+    struct Position p = {-1, -1};
+    // TODO redondancy
+    int x = ship.pos.x, y = ship.pos.y, radius = GALLEON_MOVEMENT;
+    int i_min = x < radius ? 0 : x - radius;
+    int j_min = y < radius ? 0 : y - radius;
+    int i_max = x >= FIELD_SIZE - radius ? FIELD_SIZE - 1 : x + radius;
+    int j_max = y >= FIELD_SIZE - radius ? FIELD_SIZE - 1 : y + radius;
+    for (int i = i_min; i <= i_max; i++)
+        for (int j = j_min; j <= j_max; j++)
+            if (abs(i - x) + abs(j - y) <= radius &&
+                    abs(i - x) + abs(j - y) > 0)
+                if (map_proximity[i][j] > max) {
+                    max = map_proximity[i][j];
+                    p = (struct Position) {i, j};
+                }
+    printf("%d\n", max);
+    if (p.x != -1)
+        map_go_to(ship, p);
 }

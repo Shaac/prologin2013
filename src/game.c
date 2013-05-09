@@ -56,6 +56,8 @@ static void game_age_1(void)
                 p = map_get_closest_isle(ship.pos, NO_OWNER);
                 if (p.x != -1)
                     map_go_to(ship, p);
+                else
+                    map_move_to_front(ship);
             }
         }
     }
