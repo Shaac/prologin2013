@@ -6,7 +6,7 @@ lib_TARGETS = champion
 # des flags de compilation.
 champion-srcs = prologin.c
 champion-dists =
-champion-cflags = -ggdb3 -Wall -Wextra -std=c11
+champion-cflags = -ggdb3 -Wall -Wextra -Werror -std=c11
 
 # Evite de toucher a ce qui suit
 champion-dists += prologin.h interface.hh
