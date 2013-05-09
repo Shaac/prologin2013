@@ -2,8 +2,8 @@
 
 int fleet_galleons_number = 0;
 int fleet_caravels_number = 0;
-static int fleet_galleons [FIELD_SIZE * FIELD_SIZE];
-static int fleet_caravels [FIELD_SIZE * FIELD_SIZE];
+int fleet_galleons [FIELD_SIZE * FIELD_SIZE];
+int fleet_caravels [FIELD_SIZE * FIELD_SIZE];
 
 static int fleet_purge(int array [], int size)
 {

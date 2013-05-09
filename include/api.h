@@ -84,4 +84,11 @@ static inline bool api_ship_exists(int id)
     return bateau_existe(id);
 }
 
+static inline struct Ship api_get_ship(int id)
+{
+    bateau b = info_bateau(id);
+    return (struct Ship) {b.id, (struct Position) {b.pos.x, b.pos.y},
+    b.joueur, (enum Ship_type) b.btype, b.nb_or, b.deplacable};
+}
+
 #endif // __API_H__

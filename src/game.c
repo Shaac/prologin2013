@@ -27,7 +27,13 @@ static void game_age_1(void)
         }
 
     // Caravel movement phase.
+    // TODO this is a v0.
+    for (int i = 0; i < fleet_caravels_number; i++) {
+        struct Ship ship = api_get_ship(fleet_caravels[i]);
+        if (ship.movable) {
 
+        }
+    }
 }
 
 /**
