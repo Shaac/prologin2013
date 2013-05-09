@@ -32,9 +32,13 @@ static void game_age_1(void)
         struct Ship ship = api_get_ship(fleet_caravels[i]);
         if (ship.movable) {
             struct Position p = map_get_closest_undiscovered(ship.pos);
-            map_go_to(ship, p);
+            if (p.x != -1) {
+                map_go_to(ship, p);
+                api_colonize(p);
+            }
         }
     }
+    // TODO make them flee
 }
 
 /**

@@ -101,4 +101,9 @@ static inline erreur api_move(int id, struct Position pos)
     return deplacer(id, (position) {pos.x, pos.y});
 }
 
+static inline erreur api_colonize(struct Position pos)
+{
+    return coloniser((position) {pos.x, pos.y});
+}
+
 #endif // __API_H__

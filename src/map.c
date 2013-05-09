@@ -139,5 +139,16 @@ struct Position map_get_closest_undiscovered(struct Position pos) {
 void map_go_to(struct Ship ship, struct Position pos)
 {
     if (api_move(ship.id, pos) != OK) {
+        int movement = ship.type == SHIP_GALLEON ? GALLEON_MOVEMENT :
+            CARAVEL_MOVEMENT;
+        int dx = pos.x - ship.pos.x;
+        int dy = pos.y - ship.pos.y;
+        if (abs(dx) > movement) {
+            dx = pos.x > ship.pos.x ? movement : -movement;
+            dy = 0;
+        } else
+            dy = pos.y > ship.pos.y ? movement - abs(dx) : abs(dx) - movement;
+        struct Position p = {ship.pos.x + dx, ship.pos.y + dy};
+        api_move(ship.id, p);
     }
 }
