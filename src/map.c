@@ -39,6 +39,7 @@ static int map_get_owner_id(int x, int y)
  * @param y      The position,
  * @param radius The radius.
  */
+#include <stdio.h>
 static void map_fill_surrounding(int **matrix, int x, int y, int radius)
 {
     int i_min = x < radius ? 0 : x - radius;
@@ -76,7 +77,8 @@ void map_init()
 void map_refresh()
 {
     // Compute the danger matrix.
-    memset(map_danger, 0, FIELD_SIZE * FIELD_SIZE * sizeof(int));
+    for (int i = 0; i < FIELD_SIZE; i++)
+        memset(map_danger[i], 0, FIELD_SIZE * sizeof(int));
     for (int x = 0; x < FIELD_SIZE; x++)
         for (int y = 0; y < FIELD_SIZE; y++) {
             int owner = map_get_owner_id(x, y);
@@ -85,14 +87,14 @@ void map_refresh()
         }
 
     // Compute the proximity matrix.
-    memcpy(map_proximity, map_danger, FIELD_SIZE * FIELD_SIZE * sizeof(int));
+    for (int i = 0; i < FIELD_SIZE; i++)
+        memcpy(map_proximity[i], map_danger[i], FIELD_SIZE * sizeof(int));
     for (int i = 0; i < map_isles_number; i++) {
         int owner = api_isle_owner(map_isles[i]);
         if (owner != NO_OWNER && owner != me)
             map_fill_surrounding(map_proximity, map_isles[i].x, map_isles[i].y,
                     ISLE_PROXIMITY);
     }
-
 }
 
 void map_clean() {
