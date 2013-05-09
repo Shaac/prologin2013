@@ -1,4 +1,5 @@
 #include "game.h"
+#include "map.h"
 
 static int age = 1; /**< There are different ages (steps) through the game. */
 
@@ -19,6 +20,8 @@ static void game_age_3(void)
  */
 void game_play()
 {
+    map_init();
+
     switch (age) {
         case 1: // Colonisation age.
             game_age_1();
