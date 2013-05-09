@@ -63,7 +63,7 @@ void map_init()
                     api_field_info(x, y) == FIELD_VOLCANO)
                 buffer[map_isles_number++] = (struct Position) {x, y};
     map_isles = malloc(map_isles_number * sizeof(struct Position));
-    memcpy(map_isles, buffer, map_isles_number * sizeof(int));
+    memcpy(map_isles, buffer, map_isles_number * sizeof(struct Position));
 
     // Initiate structures.
     map_danger = malloc(FIELD_SIZE * sizeof(int *));
