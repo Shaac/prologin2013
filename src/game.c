@@ -1,5 +1,6 @@
 #include "game.h"
 #include "map.h"
+#include "fleet.h"
 #include "api.h"
 
 #ifdef VERBOSE
@@ -18,9 +19,9 @@ static void game_age_1(void)
     for (int i = 0; i < map_isles_number; i++)
         if (api_isle_owner(map_isles[i]) == me) {
             if (map_proximity[map_isles[i].x][map_isles[i].y])
-                construct(SHIP_GALLEON, map_isles[i]);
+                fleet_add_galleon(map_isles[i]);
             else // TODO limit the caravel number.
-                construct(SHIP_CARAVEL, map_isles[i]);
+                fleet_add_caravel(map_isles[i]);
         }
 
     // Caravel movement phase.
@@ -49,6 +50,7 @@ void game_init() {
 void game_play()
 {
     map_refresh();
+    fleet_refresh();
 
     switch (age) {
         case 1: // Colonisation age.

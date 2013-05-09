@@ -69,9 +69,19 @@ static inline struct Ship_array api_ship_list(int x, int y) {
     return (struct Ship_array) {(struct Ship *) b.datas, b.length};
 }
 
-static inline void construct(enum Ship_type type, struct Position p)
+static inline erreur api_construct(enum Ship_type type, struct Position p)
 {
-    construire((bateau_type) type, (position) {p.x, p.y});
+    return construire((bateau_type) type, (position) {p.x, p.y});
+}
+
+static inline int api_last_id()
+{
+    return id_dernier_bateau_construit();
+}
+
+static inline bool api_ship_exists(int id)
+{
+    return bateau_existe(id);
 }
 
 #endif // __API_H__
