@@ -15,6 +15,10 @@ static void game_age_3(void)
 {
 }
 
+void game_init() {
+    map_init();
+}
+
 /**
  * @brief Function called each turn.
  */

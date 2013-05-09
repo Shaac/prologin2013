@@ -11,7 +11,7 @@
 */
 void partie_init(void)
 {
-  /* fonction a completer */
+    game_init();
 }
 
 /*!

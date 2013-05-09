@@ -12,4 +12,14 @@
 #define GALLEON_MOVEMENT    GALION_DEPLACEMENT
 #define SHIPS_LIMIT         LIMITE_BATEAUX
 
+enum field {
+    FIELD_ISLE,
+    FIELD_VOLCANO,
+    FIELD_SEA,
+    FIELD_ERROR
+};
 
+static inline enum field api_field_info(int x, int y)
+{
+    return (enum field) info_terrain((position) {x, y});
+}
