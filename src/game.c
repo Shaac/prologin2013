@@ -31,7 +31,8 @@ static void game_age_1(void)
     for (int i = 0; i < fleet_caravels_number; i++) {
         struct Ship ship = api_get_ship(fleet_caravels[i]);
         if (ship.movable) {
-
+            struct Position p = map_get_closest_undiscovered(ship.pos);
+            map_go_to(ship, p);
         }
     }
 }

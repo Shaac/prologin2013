@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <string.h>
-#include "api.h"
 #include "map.h"
 
 static int me; // TODO redondancy
@@ -120,4 +119,25 @@ int map_undicovered_number()
         if (api_isle_owner(map_isles[i]) == NO_OWNER)
             ret++;
     return ret;
+}
+
+struct Position map_get_closest_undiscovered(struct Position pos) {
+    int min = FIELD_SIZE * FIELD_SIZE;
+    struct Position ret = {-1, -1};
+    for (int i = 0; i < map_isles_number; i ++)
+        if (api_isle_owner(map_isles[i]) == NO_OWNER &&
+                !map_danger[map_isles[i].x][map_isles[i].y]) {
+            int d = api_distance(map_isles[i], pos);
+            if (d < min) {
+                min = d;
+                ret = map_isles[i];
+            }
+        }
+    return ret;
+}
+
+void map_go_to(struct Ship ship, struct Position pos)
+{
+    if (api_move(ship.id, pos) != OK) {
+    }
 }

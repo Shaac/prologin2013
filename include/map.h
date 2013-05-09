@@ -1,6 +1,8 @@
 #ifndef __MAP_H__
 #define __MAP_H__
 
+#include "api.h"
+
 extern int             map_isles_number; /**< Number of isles and volcanos. */
 extern struct Position *map_isles;       /**< Their position on the map. */
 extern int             **map_danger;     /**< Number of menacing ships. */
@@ -22,10 +24,19 @@ void map_refresh(void);
 void map_clean(void);
 
 /**
- * @brief Get the number of undiscoverd islands.
+ * @brief Get the number of undiscovered islands.
  *
- * @return The number of undiscoverd isles.
+ * @return The number of undiscovered isles.
  */
 int map_undicovered_number(void);
+
+/**
+ * @brief Get the closest undiscovered isle.
+ *
+ * @return The position of the closest undiscovered isle.
+ */
+struct Position map_get_closest_undiscovered(struct Position pos);
+
+void map_go_to(struct Ship ship, struct Position pos);
 
 #endif // __MAP_H__

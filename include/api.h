@@ -91,4 +91,14 @@ static inline struct Ship api_get_ship(int id)
     b.joueur, (enum Ship_type) b.btype, b.nb_or, b.deplacable};
 }
 
+static inline int api_distance(struct Position p1, struct Position p2)
+{
+    return distance((position) {p1.x, p1.y}, (position) {p2.x, p2.y});
+}
+
+static inline erreur api_move(int id, struct Position pos)
+{
+    return deplacer(id, (position) {pos.x, pos.y});
+}
+
 #endif // __API_H__
