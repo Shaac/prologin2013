@@ -12,3 +12,6 @@ champion-cflags = -ggdb3 -Wall -Wextra -Werror -std=c11 -Iinclude/ -I./
 champion-dists += prologin.h interface.hh
 champion-srcs += interface.cc
 include ../includes/rules.mk
+
+stechec: config.yml
+	stechec2-run.py $<
