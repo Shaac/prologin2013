@@ -20,7 +20,7 @@ static void game_age_3(void)
  */
 void game_play()
 {
-    map_init();
+    map_refresh();
 
     switch (age) {
         case 1: // Colonisation age.
