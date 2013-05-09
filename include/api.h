@@ -69,4 +69,9 @@ static inline struct Ship_array api_ship_list(int x, int y) {
     return (struct Ship_array) {(struct Ship *) b.datas, b.length};
 }
 
+static inline void construct(enum Ship_type type, struct Position p)
+{
+    construire((bateau_type) type, (position) {p.x, p.y});
+}
+
 #endif // __API_H__

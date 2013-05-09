@@ -12,6 +12,8 @@ static void game_age_1(void)
 {
     for (int i = 0; i < map_isles_number; i++)
         if (api_isle_owner(map_isles[i]) == me) {
+            if (map_proximity[map_isles[i].x][map_isles[i].y] == 0)
+                construct(SHIP_CARAVEL, map_isles[i]);
         }
 }
 
