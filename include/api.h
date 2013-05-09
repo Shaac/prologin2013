@@ -22,9 +22,29 @@ enum Field {
     FIELD_ERROR
 };
 
+enum Ship_type {
+    SHIP_CARAVEL,
+    SHIP_GALLEON,
+    SHIP_ERROR
+};
+
 struct Position {
     int x;
     int y;
+};
+
+struct Ship {
+    int id;
+    struct Position pos;
+    int player;
+    enum Ship_type type;
+    int gold;
+    bool movable;
+};
+
+struct Ship_array {
+    struct Ship *ships;
+    size_t length;
 };
 
 static inline enum Field api_field_info(int x, int y)
@@ -40,6 +60,11 @@ static inline int api_isle_owner(struct Position p)
 static inline int api_my_id()
 {
     return mon_joueur();
+}
+
+static inline struct Ship_array api_ship_list(int x, int y) {
+    bateau_array b = liste_bateaux_position((position) {x, y});
+    return (struct Ship_array) {(struct Ship *) b.datas, b.length};
 }
 
 #endif // __API_H__

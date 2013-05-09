@@ -1,12 +1,58 @@
 #include <stdlib.h>
+#include <string.h>
 #include "api.h"
 #include "map.h"
 
+#define NO_OWNER -1
+
+static int me; // TODO redondancy
 int map_isles_number;
 struct Position *map_isles;
 
+int map_danger [FIELD_SIZE][FIELD_SIZE];
+int map_proximity [FIELD_SIZE][FIELD_SIZE];
+
+/**
+ * @brief Get the id of the owner of a case, in a military way: the owner is
+ * the player with galleons on it.
+ *
+ * @param x The position.
+ * @param y The position.
+ *
+ * @return The id of the owner, NO_OWNER if none.
+ */
+static int map_get_owner_id(int x, int y)
+{
+    struct Ship_array ships = api_ship_list(x, y);
+    for (unsigned int i = 0; i < ships.length; i ++)
+        if (ships.ships[i].type == SHIP_GALLEON)
+            return ships.ships[i].player;
+    return NO_OWNER;
+}
+
+/**
+ * @brief Add 1 to the surrounding of a position in the map_danger matrix.
+ * The position is computed with the Manhattan distance.
+ *
+ * @param x      The position.
+ * @param y      The position,
+ * @param radius The radius.
+ */
+static void map_fill_surrounding(int x, int y, int radius)
+{
+    int i_min = x < radius ? 0 : x - radius;
+    int j_min = y < radius ? 0 : y - radius;
+    int i_max = x >= FIELD_SIZE - radius ? FIELD_SIZE - 1 : x + radius;
+    int j_max = y >= FIELD_SIZE - radius ? FIELD_SIZE - 1 : y + radius;
+    for (int i = i_min; i <= i_max; i++)
+        for (int j = j_min; j <= j_max; j++)
+            if (abs(i - x) + abs(j - y) <= radius)
+                map_danger[i][j]++;
+}
+
 void map_init()
 {
+    me = api_my_id();
     struct Position buffer [FIELD_SIZE * FIELD_SIZE];
     map_isles_number = 0;
     for (int x = 0; x < FIELD_SIZE; x++)
@@ -15,12 +61,19 @@ void map_init()
                     api_field_info(x, y) == FIELD_VOLCANO)
                 buffer[map_isles_number++] = (struct Position) {x, y};
     map_isles = malloc(map_isles_number * sizeof(struct Position));
-    for (int i = 0; i < map_isles_number; i++)
-        map_isles[i] = buffer[i];
+    memcpy(map_isles, buffer, map_isles_number * sizeof(int));
 }
 
 void map_refresh()
 {
+    // Compute the danger matrix.
+    memset(map_danger, 0, FIELD_SIZE * FIELD_SIZE * sizeof(int));
+    for (int x = 0; x < FIELD_SIZE; x++)
+        for (int y = 0; y < FIELD_SIZE; y++) {
+            int owner = map_get_owner_id(x, y);
+            if (owner != NO_OWNER && owner != me)
+                map_fill_surrounding(x, y, GALLEON_MOVEMENT);
+        }
 }
 
 void map_clean() {
