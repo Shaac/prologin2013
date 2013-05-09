@@ -32,4 +32,14 @@ static inline enum Field api_field_info(int x, int y)
     return (enum Field) info_terrain((position) {x, y});
 }
 
+static inline int api_isle_owner(struct Position p)
+{
+    return info_ile_joueur((position) {p.x, p.y});
+}
+
+static inline int api_my_id()
+{
+    return mon_joueur();
+}
+
 #endif // __API_H__

@@ -1,6 +1,8 @@
 #include "game.h"
 #include "map.h"
+#include "api.h"
 
+static int me;      /**< The id affected to me. */
 static int age = 1; /**< There are different ages (steps) through the game. */
 
 /**
@@ -8,6 +10,9 @@ static int age = 1; /**< There are different ages (steps) through the game. */
  */
 static void game_age_1(void)
 {
+    for (int i = 0; i < map_isles_number; i++)
+        if (api_isle_owner(map_isles[i]) == me) {
+        }
 }
 
 /**
@@ -26,6 +31,7 @@ static void game_age_3(void)
 
 void game_init() {
     map_init();
+    me = api_my_id();
 }
 
 void game_play()
