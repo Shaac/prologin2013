@@ -4,7 +4,7 @@
 ** to the script file : gen/generator_c.rb
 */
 
-#include "prologin.h"
+#include "game.h"
 
 /*!
 ** Fonction appelée au début de la partie
@@ -19,7 +19,7 @@ void partie_init(void)
 */
 void jouer_tour(void)
 {
-  /* fonction a completer */
+    game_play();
 }
 
 /*!
