@@ -13,5 +13,7 @@ champion-dists += prologin.h interface.hh
 champion-srcs += interface.cc
 include ../includes/rules.mk
 
-stechec: config.yml
+stechec: config.yml $(lib_TARGETS).so
 	stechec2-run.py $<
+
+.PHONY: stechec
