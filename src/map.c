@@ -7,8 +7,8 @@ static int me; // TODO redondancy
 int map_isles_number;
 struct Position *map_isles;
 
-int map_danger [FIELD_SIZE][FIELD_SIZE];
-int map_proximity [FIELD_SIZE][FIELD_SIZE];
+int **map_danger;
+int **map_proximity;
 
 static const int ISLE_PROXIMITY = 10;
 
@@ -63,6 +63,14 @@ void map_init()
                 buffer[map_isles_number++] = (struct Position) {x, y};
     map_isles = malloc(map_isles_number * sizeof(struct Position));
     memcpy(map_isles, buffer, map_isles_number * sizeof(int));
+
+    // Initiate structures.
+    map_danger = malloc(FIELD_SIZE * sizeof(int *));
+    for (int i = 0; i < FIELD_SIZE; i ++)
+        map_danger[i] = malloc(FIELD_SIZE * sizeof(int));
+    map_proximity = malloc(FIELD_SIZE * sizeof(int *));
+    for (int i = 0; i < FIELD_SIZE; i ++)
+        map_proximity[i] = malloc(FIELD_SIZE * sizeof(int));
 }
 
 void map_refresh()
@@ -73,8 +81,7 @@ void map_refresh()
         for (int y = 0; y < FIELD_SIZE; y++) {
             int owner = map_get_owner_id(x, y);
             if (owner != NO_OWNER && owner != me)
-                map_fill_surrounding((int **) map_danger, x, y,
-                        GALLEON_MOVEMENT);
+                map_fill_surrounding(map_danger, x, y, GALLEON_MOVEMENT);
         }
 
     // Compute the proximity matrix.
@@ -82,8 +89,8 @@ void map_refresh()
     for (int i = 0; i < map_isles_number; i++) {
         int owner = api_isle_owner(map_isles[i]);
         if (owner != NO_OWNER && owner != me)
-            map_fill_surrounding((int **) map_proximity, map_isles[i].x,
-                    map_isles[i].y, ISLE_PROXIMITY);
+            map_fill_surrounding(map_proximity, map_isles[i].x, map_isles[i].y,
+                    ISLE_PROXIMITY);
     }
 
 }
