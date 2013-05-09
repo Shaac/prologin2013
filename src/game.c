@@ -7,8 +7,9 @@
 #include <stdio.h>
 #endif // VERBOSE
 
-static int me;      /**< The id affected to me. */
-static int other;   /**< The id affected to the other. */
+int me;
+int other;
+
 static int age = 1; /**< There are different ages (steps) through the game. */
 
 /**

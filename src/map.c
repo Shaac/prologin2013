@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "map.h"
+#include "game.h"
 
-static int me; // TODO redondancy
 int map_isles_number;
 struct Position *map_isles;
 
@@ -58,7 +58,6 @@ static void map_fill_surrounding(int **matrix, int x, int y, int radius)
 
 void map_init()
 {
-    me = api_my_id();
     // TODO use the APi functions instead
     struct Position buffer [FIELD_SIZE * FIELD_SIZE];
     map_isles_number = 0;

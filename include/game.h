@@ -1,6 +1,9 @@
 #ifndef __GAME_H__
 #define __GAME_H_
 
+extern int me;    /**< The id affected to me. */
+extern int other; /**< The id affected to the other. */
+
 /**
  * @brief Called at the beginning of the game. Make initialisations.
  */

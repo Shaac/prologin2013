@@ -5,6 +5,14 @@ int fleet_caravels_number = 0;
 int fleet_galleons [FIELD_SIZE * FIELD_SIZE];
 int fleet_caravels [FIELD_SIZE * FIELD_SIZE];
 
+/**
+ * @brief Remove dead ships from a structure.
+ *
+ * @param array The structure where to remove ships.
+ * @param size  Its size.
+ *
+ * @return The structure's new size.
+ */
 static int fleet_purge(int array [], int size)
 {
     int last_id = 0;
