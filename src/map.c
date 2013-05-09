@@ -111,3 +111,12 @@ void map_refresh()
 void map_clean() {
     free(map_isles);
 }
+
+int map_undicovered_number()
+{
+    int ret = 0;
+    for (int i = 0; i < map_isles_number; i++)
+        if (api_isle_owner(map_isles[i]) == NO_OWNER)
+            ret++;
+    return ret;
+}

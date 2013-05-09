@@ -21,4 +21,11 @@ void map_refresh(void);
  */
 void map_clean(void);
 
+/**
+ * @brief Get the number of undiscoverd islands.
+ *
+ * @return The number of undiscoverd isles.
+ */
+int map_undicovered_number(void);
+
 #endif // __MAP_H__
