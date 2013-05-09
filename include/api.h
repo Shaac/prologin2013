@@ -1,3 +1,6 @@
+#ifndef __API_H__
+#define __API_H__
+
 #include "prologin.h"
 
 #define FIELD_SIZE          TAILLE_TERRAIN
@@ -12,14 +15,21 @@
 #define GALLEON_MOVEMENT    GALION_DEPLACEMENT
 #define SHIPS_LIMIT         LIMITE_BATEAUX
 
-enum field {
+enum Field {
     FIELD_ISLE,
     FIELD_VOLCANO,
     FIELD_SEA,
     FIELD_ERROR
 };
 
-static inline enum field api_field_info(int x, int y)
+struct Position {
+    int x;
+    int y;
+};
+
+static inline enum Field api_field_info(int x, int y)
 {
-    return (enum field) info_terrain((position) {x, y});
+    return (enum Field) info_terrain((position) {x, y});
 }
+
+#endif // __API_H__

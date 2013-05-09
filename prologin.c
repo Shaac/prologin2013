@@ -27,6 +27,6 @@ void jouer_tour(void)
 */
 void partie_fin(void)
 {
-  /* fonction a completer */
+    game_clean();
 }
 

@@ -3,14 +3,23 @@
 
 static int age = 1; /**< There are different ages (steps) through the game. */
 
+/**
+ * @brief Called each turn during the colonisation age.
+ */
 static void game_age_1(void)
 {
 }
 
+/**
+ * @brief Called each turn during the construction age.
+ */
 static void game_age_2(void)
 {
 }
 
+/**
+ * @brief Called each turn during the gold age.
+ */
 static void game_age_3(void)
 {
 }
@@ -19,9 +28,6 @@ void game_init() {
     map_init();
 }
 
-/**
- * @brief Function called each turn.
- */
 void game_play()
 {
     map_refresh();
@@ -37,4 +43,8 @@ void game_play()
             game_age_3();
             break;
     }
+}
+
+void game_clean() {
+    map_clean();
 }
