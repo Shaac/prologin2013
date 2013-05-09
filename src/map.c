@@ -3,14 +3,14 @@
 #include "api.h"
 #include "map.h"
 
-#define NO_OWNER -1
-
 static int me; // TODO redondancy
 int map_isles_number;
 struct Position *map_isles;
 
 int map_danger [FIELD_SIZE][FIELD_SIZE];
 int map_proximity [FIELD_SIZE][FIELD_SIZE];
+
+static const int ISLE_PROXIMITY = 10;
 
 /**
  * @brief Get the id of the owner of a case, in a military way: the owner is
@@ -31,14 +31,15 @@ static int map_get_owner_id(int x, int y)
 }
 
 /**
- * @brief Add 1 to the surrounding of a position in the map_danger matrix.
+ * @brief Add 1 to the surrounding of a position in the given matrix.
  * The position is computed with the Manhattan distance.
  *
+ * @param matrix The matrix to change.
  * @param x      The position.
  * @param y      The position,
  * @param radius The radius.
  */
-static void map_fill_surrounding(int x, int y, int radius)
+static void map_fill_surrounding(int **matrix, int x, int y, int radius)
 {
     int i_min = x < radius ? 0 : x - radius;
     int j_min = y < radius ? 0 : y - radius;
@@ -47,7 +48,7 @@ static void map_fill_surrounding(int x, int y, int radius)
     for (int i = i_min; i <= i_max; i++)
         for (int j = j_min; j <= j_max; j++)
             if (abs(i - x) + abs(j - y) <= radius)
-                map_danger[i][j]++;
+                matrix[i][j]++;
 }
 
 void map_init()
@@ -72,8 +73,19 @@ void map_refresh()
         for (int y = 0; y < FIELD_SIZE; y++) {
             int owner = map_get_owner_id(x, y);
             if (owner != NO_OWNER && owner != me)
-                map_fill_surrounding(x, y, GALLEON_MOVEMENT);
+                map_fill_surrounding((int **) map_danger, x, y,
+                        GALLEON_MOVEMENT);
         }
+
+    // Compute the proximity matrix.
+    memcpy(map_proximity, map_danger, FIELD_SIZE * FIELD_SIZE * sizeof(int));
+    for (int i = 0; i < map_isles_number; i++) {
+        int owner = api_isle_owner(map_isles[i]);
+        if (owner != NO_OWNER && owner != me)
+            map_fill_surrounding((int **) map_proximity, map_isles[i].x,
+                    map_isles[i].y, ISLE_PROXIMITY);
+    }
+
 }
 
 void map_clean() {

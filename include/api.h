@@ -15,6 +15,8 @@
 #define GALLEON_MOVEMENT    GALION_DEPLACEMENT
 #define SHIPS_LIMIT         LIMITE_BATEAUX
 
+#define NO_OWNER -1
+
 enum Field {
     FIELD_ISLE,
     FIELD_VOLCANO,
