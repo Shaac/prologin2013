@@ -2,6 +2,10 @@
 #include "map.h"
 #include "api.h"
 
+#ifdef VERBOSE
+#include <stdio.h>
+#endif // VERBOSE
+
 static int me;      /**< The id affected to me. */
 static int age = 1; /**< There are different ages (steps) through the game. */
 
@@ -10,11 +14,17 @@ static int age = 1; /**< There are different ages (steps) through the game. */
  */
 static void game_age_1(void)
 {
+    // Construction phase.
     for (int i = 0; i < map_isles_number; i++)
         if (api_isle_owner(map_isles[i]) == me) {
-            if (map_proximity[map_isles[i].x][map_isles[i].y] == 0)
+            if (map_proximity[map_isles[i].x][map_isles[i].y])
+                construct(SHIP_GALLEON, map_isles[i]);
+            else // TODO limit the caravel number.
                 construct(SHIP_CARAVEL, map_isles[i]);
         }
+
+    // Caravel movement phase.
+
 }
 
 /**
