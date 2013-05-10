@@ -4,9 +4,9 @@ lib_TARGETS = champion
 
 # Tu peux rajouter des fichiers sources, headers, ou changer
 # des flags de compilation.
-champion-srcs = prologin.c $(wildcard src/*.c)
-champion-dists = 
-champion-cflags = -ggdb3 -Wall -Wextra -Werror -std=c11 -Iinclude/ -I./ \
+champion-srcs = $(wildcard *.c)
+champion-dists = $(wildcard *.h)
+champion-cflags = -ggdb3 -Wall -Wextra -Werror -std=c11 \
     -DVERBOSE
 
 # Evite de toucher a ce qui suit
