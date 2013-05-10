@@ -24,7 +24,7 @@ void game_play()
     movements_retreive_gold();
     movements_get_higher_volcano_gold();
     movements_discover(3 * CARAVEL_MOVEMENT);
-    movements_get_volcano_gold(1);
+    movements_get_volcano_gold();
     movements_discover(FIELD_SIZE * FIELD_SIZE);
 
     // Galleons movement phase.

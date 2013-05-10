@@ -54,7 +54,7 @@ void movements_move_to_front(struct Ship ship)
     struct Position p = {-1, -1};
     FOR_i_j_IN_SURROUNDING(ship.pos.x, ship.pos.y, GALLEON_MOVEMENT) {
         int ennemies = movements_force(i, j, 2) + api_isle_owner(
-                    (struct Position) {i, j}) == other; // TODO optimize
+                (struct Position) {i, j}) == other; // TODO optimize
         if (ennemies > 0 && force >= ennemies) {
             p = (struct Position) {i, j};
         } else if (ennemies > 0 && p.x < 0)
@@ -171,13 +171,13 @@ void movements_get_higher_volcano_gold()
 
 }
 
-void movements_get_volcano_gold(int cash)
+void movements_get_volcano_gold()
 {
     help = (struct Position) {-1, -1};
     for (int i = 0; i < fleet_caravels_number; i++) {
         struct Ship ship = api_get_ship(fleet_caravels[i]);
         if (ship.movable) {
-            struct Position p = map_get_closest_isle(ship.pos, me, cash);
+            struct Position p = map_get_closest_isle(ship.pos, me, 1);
             if (p.x != -1 && help.x == -1) {
                 movements_go_to(ship, p);
                 ship = api_get_ship(fleet_caravels[i]);
@@ -186,8 +186,6 @@ void movements_get_volcano_gold(int cash)
                     if (map_danger[p.x][p.y])
                         help = p;
                 }
-                if (cash > 1)
-                    return;
             }
         }
     }
