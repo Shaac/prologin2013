@@ -46,6 +46,7 @@ int movements_force(int x, int y, int mode)
     return ret;
 }
 
+#include <stdio.h>
 void movements_move_to_front(struct Ship ship)
 {
     // See if we can attack.
@@ -74,11 +75,12 @@ void movements_move_to_front(struct Ship ship)
             for (int dy = abs(dx) - diff; true; dy += 2 * (diff - abs(dx))) {
                 p = (struct Position) {ship.pos.x + dx, ship.pos.y + dy};
                 if (p.x >= 0 && p.y >= 0 && p.x < FIELD_SIZE && p.y <
-                        FIELD_SIZE)
-                    if (map_positions[p.x][p.y] && movements_force(p.x, p.y, 2) > 0) {
+                        FIELD_SIZE) {
+                    if (map_positions[p.x][p.y] && movements_force(p.x, p.y, 2) >= 0) {
                         movements_go_to(ship, p);
                         return;
                     }
+                }
                 if (dy == diff - abs(dx))
                     break;
             }
@@ -161,8 +163,8 @@ void movements_move_galleons()
             if (ship.movable) {
                 if (help.x != -1 && api_move(ship.id, help) == OK) {
                     if (-movements_force(help.x, help.y, 2) >
-                                map_danger[help.x][help.y])
-                    help.x = -1;
+                            map_danger[help.x][help.y])
+                        help.x = -1;
                 } else
                     movements_move_to_front(ship);
             }
