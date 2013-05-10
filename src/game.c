@@ -22,13 +22,7 @@ void game_play()
 
     // Caravel movement phase.
     movements_retreive_gold();
-    int m = 10;
-    for (int i = 0; i < map_isles_number; i++)
-        if (api_field_info(map_isles[i].x, map_isles[i].y) == FIELD_VOLCANO)
-            if (api_isle_owner(map_isles[i]) == me)
-                m = api_gold(map_isles[i]) > m ? api_gold(map_isles[i]) : m;
-
-    movements_get_volcano_gold(m);
+    movements_get_higher_volcano_gold();
     movements_discover(3 * CARAVEL_MOVEMENT);
     movements_get_volcano_gold(1);
     movements_discover(FIELD_SIZE * FIELD_SIZE);

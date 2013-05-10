@@ -38,7 +38,7 @@ static const int ISLE_PROXIMITY = 2 * GALLEON_MOVEMENT;
  *
  * @return The id of the owner, NO_OWNER if none.
  */
-static int map_get_owner_id(int x, int y, enum Ship_type type)
+int map_get_owner_id(int x, int y, enum Ship_type type)
 {
     struct Ship_array ships = api_ship_list(x, y);
     int ret = NO_OWNER;

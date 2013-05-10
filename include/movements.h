@@ -35,4 +35,5 @@ void movements_get_volcano_gold(int cash);
 
 void movements_move_galleons(void);
 
+void movements_get_higher_volcano_gold(void);
 #endif // __MOVEMENTS_H__

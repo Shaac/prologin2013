@@ -134,6 +134,43 @@ void movements_discover(int d)
     }
 }
 
+void movements_get_higher_volcano_gold()
+{
+    int m = 10;
+    struct Position p = {-1, -1};
+    for (int i = 0; i < map_isles_number; i++)
+        if (api_field_info(map_isles[i].x, map_isles[i].y) == FIELD_VOLCANO)
+            if (api_isle_owner(map_isles[i]) == me)
+                if (api_gold(map_isles[i]) > m) {
+                    m = api_gold(map_isles[i]);
+                    p = map_isles[i];
+                }
+    if (p.x == -1)
+        return;
+    int min = FIELD_SIZE * FIELD_SIZE;
+    struct Ship s;
+    for (int i = 0; i < fleet_caravels_number; i++) {
+        struct Ship ship = api_get_ship(fleet_caravels[i]);
+        if (ship.movable) {
+            int d = api_distance(ship.pos, p);
+            if (d < min) {
+                min = d;
+                s = ship;
+            }
+        }
+    }
+    if (min < FIELD_SIZE * FIELD_SIZE) {
+        movements_go_to(s, p);
+        s = api_get_ship(s.id);
+        if (s.pos.x == p.x && s.pos.y == p.y) {
+            api_load(s.id);
+            if (map_danger[p.x][p.y])
+                help = p;
+        }
+    }
+
+}
+
 void movements_get_volcano_gold(int cash)
 {
     help = (struct Position) {-1, -1};
