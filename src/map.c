@@ -184,21 +184,28 @@ void map_move_to_front(struct Ship ship)
             p = (struct Position) {i, j};
         }
     }
-    if (p.x != -1)
+    if (p.x != -1) {
         map_go_to(ship, p);
-
-    // If not, go near the enemy.
-    else {
-        // TODO make this better
-        for (int i = 0; i < FIELD_SIZE; i++)
-            for (int j = 0; j < FIELD_SIZE; j++) {
-                p = (struct Position) {i, j};
-                if (map_get_owner_id(i, j, SHIP_GALLEON) == other  ||
-                        map_get_owner_id(i, j, SHIP_CARAVEL) == other ||
-                        api_isle_owner(p) == other)
-                    map_go_to(ship, p);
-            }
+        return;
     }
+
+    // If not, go near the ennemy.
+    // TODO make this better
+    for (int diff = 1; diff < FIELD_SIZE * FIELD_SIZE; diff++)
+        for (int dx = -diff; dx <= diff; dx++)
+            for (int dy = abs(dx) - diff; true; dy += 2 * (diff - abs(dx))) {
+                p = (struct Position) {ship.pos.x + dx, ship.pos.y + dy};
+                if (p.x >= 0 && p.y >= 0 && p.x < FIELD_SIZE && p.y <
+                        FIELD_SIZE)
+                    if (map_get_owner_id(p.x, p.y, SHIP_GALLEON) == other  ||
+                            map_get_owner_id(p.x, p.y, SHIP_CARAVEL) == other ||
+                            api_isle_owner(p) == other) {
+                        map_go_to(ship, p);
+                        return;
+                    }
+                if (dy == diff - abs(dx))
+                    break;
+            }
 }
 
 void map_flee(struct Ship ship)
