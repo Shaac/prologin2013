@@ -57,7 +57,7 @@ static void map_fill_surrounding(int **matrix, int x, int y, int radius)
     for (int i = i_min; i <= i_max; i++)
         for (int j = j_min; j <= j_max; j++)
             if (abs(i - x) + abs(j - y) <= radius)
-                matrix[i][j]+= radius + 1 - abs(i - x) - abs(j - y);
+                matrix[i][j]++;
 }
 
 void map_init()
@@ -90,8 +90,10 @@ void map_refresh()
     for (int x = 0; x < FIELD_SIZE; x++)
         for (int y = 0; y < FIELD_SIZE; y++) {
             int owner = map_get_owner_id(x, y, SHIP_GALLEON);
-            if (owner != NO_OWNER && owner != me)
+            if (owner != NO_OWNER && owner != me) {
                 map_fill_surrounding(map_danger, x, y, GALLEON_MOVEMENT);
+                map_danger[x][y] += 100;
+            }
         }
 
     // Compute the proximity matrix.
