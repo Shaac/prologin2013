@@ -1,5 +1,5 @@
 rules: libprologin2013.so
-map: ./simple.map
+map: ./laB.map
 verbose: 3
 clients:
   - ./champion.so
