@@ -27,4 +27,5 @@ bool fleet_add_caravel(struct Position pos);
  */
 void fleet_refresh(void);
 
+void fleet_construct_ships(void);
 #endif // __FLEET_H__

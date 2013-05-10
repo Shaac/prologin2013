@@ -1,4 +1,6 @@
 #include "api.h"
+#include "map.h"
+#include "game.h"
 
 int fleet_galleons_number = 0;
 int fleet_caravels_number = 0;
@@ -44,4 +46,18 @@ void fleet_refresh()
 {
     fleet_galleons_number = fleet_purge(fleet_galleons, fleet_galleons_number);
     fleet_caravels_number = fleet_purge(fleet_caravels, fleet_caravels_number);
+}
+
+void fleet_construct_ships()
+{
+    int undicovered = map_undicovered_number();
+    for (int i = 0; i < map_isles_number; i++)
+        if (api_isle_owner(map_isles[i]) == me) {
+            if (map_proximity[map_isles[i].x][map_isles[i].y] ||
+                    fleet_caravels_number > undicovered / 2 ||
+                    fleet_caravels_number > fleet_galleons_number + 3)
+                while (fleet_add_galleon(map_isles[i])) ;
+            else
+                while (fleet_add_caravel(map_isles[i])) ;
+        }
 }
