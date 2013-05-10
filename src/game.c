@@ -30,7 +30,7 @@ static void game_age_1(void)
         }
 
     // Caravel movement phase.
-    // TODO this is a v0.
+    // TODO improve this drafty isles attribution.
     for (int i = 0; i < fleet_caravels_number; i++) {
         struct Ship ship = api_get_ship(fleet_caravels[i]);
         if (ship.movable) {
@@ -38,10 +38,10 @@ static void game_age_1(void)
             if (p.x != -1) {
                 map_go_to(ship, p);
                 api_colonize(p);
-            }
+            } else
+                map_flee(ship);
         }
     }
-    // TODO make them flee
 
     // Galleons movement phase.
     for (int i = 0; i < fleet_galleons_number; i++) {

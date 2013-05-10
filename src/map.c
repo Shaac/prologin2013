@@ -184,3 +184,14 @@ void map_move_to_front(struct Ship ship)
                 }
     }
 }
+
+void map_flee(struct Ship ship)
+{
+    int r = ship.type == SHIP_GALLEON ? GALLEON_MOVEMENT : CARAVEL_MOVEMENT;
+    FOR_i_j_IN_SURROUNDING(ship.pos.x, ship.pos.y, r)
+        if (!map_danger[i][j]) {
+            struct Position p = {i, j};
+            map_go_to(ship, p);
+            return;
+        }
+}
