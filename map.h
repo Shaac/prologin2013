@@ -48,7 +48,10 @@ int map_undiscovered_number(void);
 /**
  * @brief Get the closest isle from a specifier player.
  *
- * @param id The player id.
+ * @param pos  The origin.
+ * @param id   The player id.
+ * @param cash If strictly positive, consider only volcanos, with more gold
+ * than cash; if strictly negative, consider only non-volcanos;
  *
  * @return The position of the closest isle.
  */
