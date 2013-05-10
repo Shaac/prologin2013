@@ -24,18 +24,20 @@ void movements_go_to(struct Ship ship, struct Position pos)
     }
 }
 
-static int movements_force(int x, int y, bool mine)
+static int movements_force(int x, int y, int mode)
 {
     int ret = 0;
     struct Ship_array ships = api_ship_list(x, y);
     for (unsigned int i = 0; i < ships.length; i ++)
         if (ships.ships[i].type == SHIP_GALLEON) {
-            if (mine && ships.ships[i].movable)
+            if (mode == 1 && ships.ships[i].movable)
                 ret++;
-            if (!mine && ships.ships[i].player == other)
+            if (mode == 2 && ships.ships[i].player == other)
                 ret++;
-            if (!mine && ships.ships[i].player == me)
+            if (mode == 2 && ships.ships[i].player == me)
                 ret--;
+            if (mode == 3 && ships.ships[i].player == me)
+                ret ++;
         }
     return ret;
 }
@@ -43,10 +45,10 @@ static int movements_force(int x, int y, bool mine)
 void movements_move_to_front(struct Ship ship)
 {
     // See if we can attack.
-    int force = movements_force(ship.pos.x, ship.pos.y, true);
+    int force = movements_force(ship.pos.x, ship.pos.y, 1);
     struct Position p = {-1, -1};
     FOR_i_j_IN_SURROUNDING(ship.pos.x, ship.pos.y, GALLEON_MOVEMENT) {
-        int ennemies = movements_force(i, j, false); // TODO optimize
+        int ennemies = movements_force(i, j, 2); // TODO optimize
         if (ennemies > 0 && force > ennemies) {
             p = (struct Position) {i, j};
         } else if (ennemies > 0 && p.x < 0)
@@ -80,10 +82,17 @@ void movements_move_to_front(struct Ship ship)
 void movements_flee(struct Ship ship)
 {
     int r = ship.type == SHIP_GALLEON ? GALLEON_MOVEMENT : CARAVEL_MOVEMENT;
+    int max = -1;
+    struct Position p = {-1, -1};
     FOR_i_j_IN_SURROUNDING(ship.pos.x, ship.pos.y, r)
         if (!map_danger[i][j]) {
-            struct Position p = {i, j};
-            movements_go_to(ship, p);
-            return;
+            int nb = movements_force(i, j, 3);
+            if (nb > max) {
+                max = nb;
+                p = (struct Position) {i, j};
+            }
         }
+    if (p.x != -1)
+        movements_go_to(ship, p);
+    return;
 }
