@@ -50,8 +50,9 @@ void movements_move_to_front(struct Ship ship)
     int force = movements_force(ship.pos.x, ship.pos.y, 1);
     struct Position p = {-1, -1};
     FOR_i_j_IN_SURROUNDING(ship.pos.x, ship.pos.y, GALLEON_MOVEMENT) {
-        int ennemies = movements_force(i, j, 2); // TODO optimize
-        if (ennemies > 0 && force > ennemies) {
+        int ennemies = movements_force(i, j, 2) + api_isle_owner(
+                    (struct Position) {i, j}) == other; // TODO optimize
+        if (ennemies > 0 && force >= ennemies) {
             p = (struct Position) {i, j};
         } else if (ennemies > 0 && p.x < 0)
             p.x = -2;
@@ -72,7 +73,7 @@ void movements_move_to_front(struct Ship ship)
                 p = (struct Position) {ship.pos.x + dx, ship.pos.y + dy};
                 if (p.x >= 0 && p.y >= 0 && p.x < FIELD_SIZE && p.y <
                         FIELD_SIZE)
-                    if (map_positions[p.x][p.y]) {
+                    if (map_positions[p.x][p.y] && movements_force(p.x, p.y, 2) > 0) {
                         movements_go_to(ship, p);
                         return;
                     }
