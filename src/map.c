@@ -3,16 +3,27 @@
 #include "map.h"
 #include "game.h"
 
-#ifdef VERBOSE
-#include <stdio.h>
-#endif // VERBOSE
-
-int map_isles_number;
+int             map_isles_number;
 struct Position *map_isles;
+int             **map_danger;
+int             **map_proximity;
+bool            **map_positions;
 
-int  **map_danger;
-int  **map_proximity;
-bool **map_positions;
+#define INIT_MATRIX(matrix, type)                            \
+    do {                                                     \
+        matrix = malloc(FIELD_SIZE * sizeof(type *));        \
+        for (int i = 0; i < FIELD_SIZE; i ++) {              \
+            (matrix)[i] = malloc(FIELD_SIZE * sizeof(type)); \
+        }                                                    \
+    } while (0);
+
+#define FREE_MATRIX(matrix)                                  \
+    do {                                                     \
+        for (int i = 0; i < FIELD_SIZE; i ++) {              \
+            free((matrix)[i]);                               \
+        }                                                    \
+        free(matrix);                                        \
+    } while (0);
 
 static const int ISLE_PROXIMITY = 2 * GALLEON_MOVEMENT;
 
@@ -54,15 +65,9 @@ void map_init()
     memcpy(map_isles, buffer, map_isles_number * sizeof(struct Position));
 
     // Initiate structures.
-    map_danger = malloc(FIELD_SIZE * sizeof(int *));
-    for (int i = 0; i < FIELD_SIZE; i ++)
-        map_danger[i] = malloc(FIELD_SIZE * sizeof(int));
-    map_proximity = malloc(FIELD_SIZE * sizeof(int *));
-    for (int i = 0; i < FIELD_SIZE; i ++)
-        map_proximity[i] = malloc(FIELD_SIZE * sizeof(int));
-    map_positions = malloc(FIELD_SIZE * sizeof(bool *));
-    for (int i = 0; i < FIELD_SIZE; i ++)
-        map_positions[i] = malloc(FIELD_SIZE * sizeof(bool));
+    INIT_MATRIX(map_danger,    int);
+    INIT_MATRIX(map_proximity, int);
+    INIT_MATRIX(map_positions, bool);
 }
 
 void map_refresh()
@@ -108,6 +113,9 @@ void map_refresh()
 
 void map_clean() {
     free(map_isles);
+    FREE_MATRIX(map_danger);
+    FREE_MATRIX(map_proximity);
+    FREE_MATRIX(map_positions);
 }
 
 int map_undiscovered_number()
