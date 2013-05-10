@@ -27,4 +27,6 @@ void movements_flee(struct Ship ship);
 
 int movements_force(int x, int y, int mode);
 
+void movements_retreive_gold(void);
+
 #endif // __MOVEMENTS_H__

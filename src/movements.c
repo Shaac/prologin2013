@@ -1,6 +1,7 @@
 #include "movements.h"
 #include "map.h"
 #include "game.h"
+#include "fleet.h"
 
 void movements_go_to(struct Ship ship, struct Position pos)
 {
@@ -96,4 +97,19 @@ void movements_flee(struct Ship ship)
     if (p.x != -1)
         movements_go_to(ship, p);
     return;
+}
+
+void movements_retreive_gold()
+{
+    for (int i = 0; i < fleet_caravels_number; i++) {
+        struct Ship ship = api_get_ship(fleet_caravels[i]);
+        if (ship.movable && ship.gold) {
+            api_load(ship.id);
+            struct Position p = map_get_closest_isle(ship.pos, me, -1);
+            if (p.x != -1) {
+                movements_go_to(ship, p);
+                api_unload(ship.id);
+            }
+        }
+    }
 }

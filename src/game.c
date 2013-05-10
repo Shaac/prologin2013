@@ -20,19 +20,15 @@ static void game_age_1(void)
 {
     // Caravel movement phase.
     // TODO improve this drafty isles attribution.
+    movements_retreive_gold();
     for (int i = 0; i < fleet_caravels_number; i++) {
         struct Ship ship = api_get_ship(fleet_caravels[i]);
         if (ship.movable) {
             struct Position p;
-            if (ship.gold) {
-                api_load(ship.id);
-                p = map_get_closest_isle(ship.pos, me, -1);
-            } else
                 p = map_get_closest_isle(ship.pos, NO_OWNER, 0);
             if (p.x != -1) {
                 movements_go_to(ship, p);
                 api_colonize(p);
-                api_unload(ship.id);
             }
         }
     }
