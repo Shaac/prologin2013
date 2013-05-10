@@ -49,10 +49,14 @@ void movements_move_to_front(struct Ship ship)
         int ennemies = movements_force(i, j, false); // TODO optimize
         if (ennemies > 0 && force > ennemies) {
             p = (struct Position) {i, j};
-        }
+        } else if (ennemies > 0 && p.x < 0)
+            p.x = -2;
     }
     if (p.x != -1) {
         movements_go_to(ship, p);
+        return;
+    } else if (p.x == -2) { // avoid suicidal attacks
+        movements_flee(ship); // TODO regroup
         return;
     }
 
