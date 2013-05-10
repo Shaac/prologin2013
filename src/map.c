@@ -158,20 +158,12 @@ void map_move_to_front(struct Ship ship)
 {
     int max = 0;
     struct Position p = {-1, -1};
-    // TODO redondancy
-    int x = ship.pos.x, y = ship.pos.y, radius = GALLEON_MOVEMENT;
-    int i_min = x < radius ? 0 : x - radius;
-    int j_min = y < radius ? 0 : y - radius;
-    int i_max = x >= FIELD_SIZE - radius ? FIELD_SIZE - 1 : x + radius;
-    int j_max = y >= FIELD_SIZE - radius ? FIELD_SIZE - 1 : y + radius;
-    for (int i = i_min; i <= i_max; i++)
-        for (int j = j_min; j <= j_max; j++)
-            if (abs(i - x) + abs(j - y) <= radius &&
-                    abs(i - x) + abs(j - y) > 0)
-                if (map_proximity[i][j] > max) {
-                    max = map_proximity[i][j];
-                    p = (struct Position) {i, j};
-                }
+    FOR_i_j_IN_SURROUNDING(ship.pos.x, ship.pos.y, GALLEON_MOVEMENT)
+        if (abs(i - ship.pos.x) + abs(j - ship.pos.y) > 0)
+            if (map_proximity[i][j] > max) {
+                max = map_proximity[i][j];
+                p = (struct Position) {i, j};
+            }
     if (p.x != -1)
         map_go_to(ship, p);
     else {
