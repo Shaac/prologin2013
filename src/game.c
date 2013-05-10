@@ -19,19 +19,8 @@ static int age = 1; /**< There are different ages (steps) through the game. */
 static void game_age_1(void)
 {
     // Caravel movement phase.
-    // TODO improve this drafty isles attribution.
     movements_retreive_gold();
-    for (int i = 0; i < fleet_caravels_number; i++) {
-        struct Ship ship = api_get_ship(fleet_caravels[i]);
-        if (ship.movable) {
-            struct Position p;
-                p = map_get_closest_isle(ship.pos, NO_OWNER, 0);
-            if (p.x != -1) {
-                movements_go_to(ship, p);
-                api_colonize(p);
-            }
-        }
-    }
+    movements_discover();
     struct Position help = {-1, -1};
     for (int i = 0; i < fleet_caravels_number; i++) {
         struct Ship ship = api_get_ship(fleet_caravels[i]);

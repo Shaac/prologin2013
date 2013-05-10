@@ -113,3 +113,18 @@ void movements_retreive_gold()
         }
     }
 }
+
+void movements_discover()
+{
+    // TODO improve this drafty isles attribution.
+    for (int i = 0; i < fleet_caravels_number; i++) {
+        struct Ship ship = api_get_ship(fleet_caravels[i]);
+        if (ship.movable) {
+            struct Position p = map_get_closest_isle(ship.pos, NO_OWNER, 0);
+            if (p.x != -1) {
+                movements_go_to(ship, p);
+                api_colonize(p);
+            }
+        }
+    }
+}

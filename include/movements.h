@@ -29,4 +29,5 @@ int movements_force(int x, int y, int mode);
 
 void movements_retreive_gold(void);
 
+void movements_discover(void);
 #endif // __MOVEMENTS_H__
