@@ -3,6 +3,8 @@
 #include "game.h"
 #include "fleet.h"
 
+static struct Position help;
+
 void movements_go_to(struct Ship ship, struct Position pos)
 {
     // TODO check if api_move is not bugged (circulary issues).
@@ -128,4 +130,43 @@ void movements_discover()
             }
         }
     }
+}
+
+void movements_get_volcano_gold()
+{
+    help = (struct Position) {-1, -1};
+    for (int i = 0; i < fleet_caravels_number; i++) {
+        struct Ship ship = api_get_ship(fleet_caravels[i]);
+        if (ship.movable) {
+            struct Position p = map_get_closest_isle(ship.pos, me, 1);
+            if (p.x != -1 && help.x == -1) {
+                movements_go_to(ship, p);
+                ship = api_get_ship(fleet_caravels[i]);
+                if (ship.pos.x == p.x && ship.pos.y == p.y) {
+                    api_load(ship.id);
+                    if (map_danger[p.x][p.y])
+                        help = p;
+                }
+            } else
+                movements_flee(ship);
+        }
+    }
+}
+
+void movements_move_galleons()
+{
+    if (score(other)) {
+        for (int i = 0; i < fleet_galleons_number; i++) {
+            struct Ship ship = api_get_ship(fleet_galleons[i]);
+            if (ship.movable) {
+                if (help.x != -1 && api_move(ship.id, help) == OK) {
+                    if (-movements_force(help.x, help.y, 2) >
+                                map_danger[help.x][help.y])
+                    help.x = -1;
+                } else
+                    movements_move_to_front(ship);
+            }
+        }
+    }
+
 }

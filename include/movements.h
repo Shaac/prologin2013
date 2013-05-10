@@ -30,4 +30,9 @@ int movements_force(int x, int y, int mode);
 void movements_retreive_gold(void);
 
 void movements_discover(void);
+
+void movements_get_volcano_gold(void);
+
+void movements_move_galleons(void);
+
 #endif // __MOVEMENTS_H__

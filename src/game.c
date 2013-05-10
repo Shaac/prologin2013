@@ -7,52 +7,31 @@
 #ifdef VERBOSE
 #include <stdio.h>
 #else
-#define printf(...) (void) 42;
+#define printf(...) (void) 42
 #endif // VERBOSE
 
 int me;
 int other;
 
+void game_init() {
+    map_init();
+    me    = api_my_id();
+    other = api_other_id();
+}
+
 void game_play()
 {
+    // Update data since this is a new turn.
     map_refresh();
     fleet_refresh();
 
     // Caravel movement phase.
     movements_retreive_gold();
     movements_discover();
-    struct Position help = {-1, -1};
-    for (int i = 0; i < fleet_caravels_number; i++) {
-        struct Ship ship = api_get_ship(fleet_caravels[i]);
-        if (ship.movable) {
-            struct Position p = map_get_closest_isle(ship.pos, me, 1);
-            if (p.x != -1 && help.x == -1) {
-                movements_go_to(ship, p);
-                ship = api_get_ship(fleet_caravels[i]);
-                if (ship.pos.x == p.x && ship.pos.y == p.y) {
-                    api_load(ship.id);
-                    if (map_danger[p.x][p.y])
-                        help = p;
-                }
-            } else
-                movements_flee(ship);
-        }
-    }
+    movements_get_volcano_gold();
 
     // Galleons movement phase.
-    if (score(other)) {
-        for (int i = 0; i < fleet_galleons_number; i++) {
-            struct Ship ship = api_get_ship(fleet_galleons[i]);
-            if (ship.movable) {
-                if (help.x != -1 && api_move(ship.id, help) == OK) {
-                    if (-movements_force(help.x, help.y, 2) >
-                                map_danger[help.x][help.y])
-                    help.x = -1;
-                } else
-                    movements_move_to_front(ship);
-            }
-        }
-    }
+    movements_move_galleons();
 
     // Construction phase.
     int undicovered = map_undicovered_number();
@@ -65,12 +44,6 @@ void game_play()
             else
                 while (fleet_add_caravel(map_isles[i])) ;
         }
-}
-
-void game_init() {
-    map_init();
-    me    = api_my_id();
-    other = api_other_id();
 }
 
 void game_clean() {
