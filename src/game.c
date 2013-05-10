@@ -13,13 +13,11 @@
 int me;
 int other;
 
-static int age = 1; /**< There are different ages (steps) through the game. */
-
-/**
- * @brief Called each turn during the colonisation age.
- */
-static void game_age_1(void)
+void game_play()
 {
+    map_refresh();
+    fleet_refresh();
+
     // Caravel movement phase.
     movements_retreive_gold();
     movements_discover();
@@ -69,42 +67,10 @@ static void game_age_1(void)
         }
 }
 
-/**
- * @brief Called each turn during the construction age.
- */
-static void game_age_2(void)
-{
-}
-
-/**
- * @brief Called each turn during the gold age.
- */
-static void game_age_3(void)
-{
-}
-
 void game_init() {
     map_init();
     me    = api_my_id();
     other = api_other_id();
-}
-
-void game_play()
-{
-    map_refresh();
-    fleet_refresh();
-
-    switch (age) {
-        case 1: // Colonisation age.
-            game_age_1();
-            break;
-        case 2: // Construction age.
-            game_age_2();
-            break;
-        case 3: // Gold age.
-            game_age_3();
-            break;
-    }
 }
 
 void game_clean() {
