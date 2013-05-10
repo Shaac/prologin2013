@@ -47,21 +47,9 @@ static void game_age_1(void)
     for (int i = 0; i < fleet_galleons_number; i++) {
         struct Ship ship = api_get_ship(fleet_galleons[i]);
         if (ship.movable) {
-            // TODO try to make some free kills
-            // TODO go to caravans too
-            struct Position p = map_get_closest_isle(ship.pos, other);
-            if (p.x != -1)
-                map_go_to(ship, p);
-            else {
-                p = map_get_closest_isle(ship.pos, NO_OWNER);
-                if (p.x != -1)
-                    map_go_to(ship, p);
-                else
-                    map_move_to_front(ship);
-            }
+            map_move_to_front(ship);
         }
     }
-    // TODO defend volcanos.
 }
 
 /**

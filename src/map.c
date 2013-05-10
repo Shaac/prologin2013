@@ -169,11 +169,13 @@ void map_move_to_front(struct Ship ship)
     else {
         // TODO make this better
         for (int i = 0; i < FIELD_SIZE; i++)
-            for (int j = 0; j < FIELD_SIZE; j++)
-                if (map_get_owner_id(i, j, SHIP_GALLEON) == other) {
-                    p = (struct Position) {i, j};
+            for (int j = 0; j < FIELD_SIZE; j++) {
+                p = (struct Position) {i, j};
+                if (map_get_owner_id(i, j, SHIP_GALLEON) == other  ||
+                        map_get_owner_id(i, j, SHIP_CARAVEL) == other ||
+                        api_isle_owner(p) == other)
                     map_go_to(ship, p);
-                }
+            }
     }
 }
 
