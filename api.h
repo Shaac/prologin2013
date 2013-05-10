@@ -93,7 +93,7 @@ static inline struct Ship api_get_ship(int id)
 {
     bateau b = info_bateau(id);
     return (struct Ship) {b.id, (struct Position) {b.pos.x, b.pos.y},
-    b.joueur, (enum Ship_type) b.btype, b.nb_or, b.deplacable};
+        b.joueur, (enum Ship_type) b.btype, b.nb_or, b.deplacable};
 }
 
 static inline int api_distance(struct Position p1, struct Position p2)

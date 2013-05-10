@@ -149,6 +149,9 @@ void movements_discover(int d)
 
 void movements_get_higher_volcano_gold()
 {
+    help = (struct Position) {-1, -1};
+
+    // Get the richest volcano.
     int m = 10;
     struct Position p = {-1, -1};
     for (int i = 0; i < map_isles_number; i++)
@@ -160,6 +163,8 @@ void movements_get_higher_volcano_gold()
                 }
     if (p.x == -1)
         return;
+
+    // Get the closest caravel.
     int min = FIELD_SIZE * FIELD_SIZE;
     struct Ship s;
     for (int i = 0; i < fleet_caravels_number; i++) {
@@ -172,6 +177,8 @@ void movements_get_higher_volcano_gold()
             }
         }
     }
+
+    // Move it.
     if (min < FIELD_SIZE * FIELD_SIZE) {
         movements_go_to(s, p);
         s = api_get_ship(s.id);
@@ -186,7 +193,6 @@ void movements_get_higher_volcano_gold()
 
 void movements_get_volcano_gold()
 {
-    help = (struct Position) {-1, -1};
     for (int i = 0; i < fleet_caravels_number; i++) {
         struct Ship ship = api_get_ship(fleet_caravels[i]);
         if (ship.movable) {
@@ -203,7 +209,6 @@ void movements_get_volcano_gold()
         }
     }
 }
-// TODO movements_flee(ship);
 
 void movements_move_galleons()
 {
