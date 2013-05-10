@@ -40,25 +40,18 @@ static int map_get_owner_id(int x, int y, enum Ship_type type)
 }
 
 /**
- * @brief Add 1 to the surrounding of a position in the given matrix.
- * The position is computed with the Manhattan distance.
+ * @brief Sorry for this ugly macro. Go through each surrounding of a position.
  *
- * @param matrix The matrix to change.
- * @param x      The position.
- * @param y      The position,
- * @param radius The radius.
+ * @param x The position.
+ * @param y The position,
+ * @param r The radius.
  */
-static void map_fill_surrounding(int **matrix, int x, int y, int radius)
-{
-    int i_min = x < radius ? 0 : x - radius;
-    int j_min = y < radius ? 0 : y - radius;
-    int i_max = x >= FIELD_SIZE - radius ? FIELD_SIZE - 1 : x + radius;
-    int j_max = y >= FIELD_SIZE - radius ? FIELD_SIZE - 1 : y + radius;
-    for (int i = i_min; i <= i_max; i++)
-        for (int j = j_min; j <= j_max; j++)
-            if (abs(i - x) + abs(j - y) <= radius)
-                matrix[i][j]++;
-}
+#define FOR_i_j_IN_SURROUNDING(x, y, r) \
+    for (int i = ((x) < (r) ? 0 : (x) - (r)); \
+            i <= ((x) >= FIELD_SIZE - (r) ? FIELD_SIZE - 1 : (x) + (r)); i++) \
+for (int j = ((y) < (r) ? 0 : (y) - (r)); \
+        j <= ((y) >= FIELD_SIZE - (r) ? FIELD_SIZE - 1 : (y) + (r)); j++) \
+if (abs(i - (x)) + abs(j - (y)) <= (r))
 
 void map_init()
 {
@@ -91,7 +84,8 @@ void map_refresh()
         for (int y = 0; y < FIELD_SIZE; y++) {
             int owner = map_get_owner_id(x, y, SHIP_GALLEON);
             if (owner != NO_OWNER && owner != me) {
-                map_fill_surrounding(map_danger, x, y, GALLEON_MOVEMENT);
+                FOR_i_j_IN_SURROUNDING(x, y, GALLEON_MOVEMENT)
+                    map_danger[i][j]++;
                 map_danger[x][y] += 100;
             }
         }
@@ -99,17 +93,19 @@ void map_refresh()
     // Compute the proximity matrix.
     for (int i = 0; i < FIELD_SIZE; i++)
         memcpy(map_proximity[i], map_danger[i], FIELD_SIZE * sizeof(int));
-    for (int i = 0; i < map_isles_number; i++) {
-        int owner = api_isle_owner(map_isles[i]);
+    for (int k = 0; k < map_isles_number; k++) {
+        int owner = api_isle_owner(map_isles[k]);
         if (owner != NO_OWNER && owner != me)
-            map_fill_surrounding(map_proximity, map_isles[i].x, map_isles[i].y,
-                    ISLE_PROXIMITY);
+            FOR_i_j_IN_SURROUNDING(map_isles[k].x, map_isles[k].y,
+                    ISLE_PROXIMITY)
+                map_proximity[i][j]++;
     }
     for (int x = 0; x < FIELD_SIZE; x++)
         for (int y = 0; y < FIELD_SIZE; y++) {
             int owner = map_get_owner_id(x, y, SHIP_CARAVEL);
             if (owner != NO_OWNER && owner != me)
-                map_fill_surrounding(map_danger, x, y, CARAVEL_MOVEMENT);
+                FOR_i_j_IN_SURROUNDING(x, y, CARAVEL_MOVEMENT)
+                    map_danger[i][j]++;
         }
 }
 
