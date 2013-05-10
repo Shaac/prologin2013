@@ -25,4 +25,6 @@ void movements_move_to_front(struct Ship ship);
  */
 void movements_flee(struct Ship ship);
 
+int movements_force(int x, int y, int mode);
+
 #endif // __MOVEMENTS_H__

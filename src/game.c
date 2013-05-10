@@ -59,7 +59,11 @@ static void game_age_1(void)
         for (int i = 0; i < fleet_galleons_number; i++) {
             struct Ship ship = api_get_ship(fleet_galleons[i]);
             if (ship.movable) {
-                if (!(help.x != -1 && api_move(ship.id, help) == OK))
+                if (help.x != -1 && api_move(ship.id, help) == OK) {
+                    if (-movements_force(help.x, help.y, 2) >
+                                map_danger[help.x][help.y])
+                    help.x = -1;
+                } else
                     movements_move_to_front(ship);
             }
         }

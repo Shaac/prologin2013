@@ -24,7 +24,7 @@ void movements_go_to(struct Ship ship, struct Position pos)
     }
 }
 
-static int movements_force(int x, int y, int mode)
+int movements_force(int x, int y, int mode)
 {
     int ret = 0;
     struct Ship_array ships = api_ship_list(x, y);
@@ -39,6 +39,7 @@ static int movements_force(int x, int y, int mode)
             if (mode == 3 && ships.ships[i].player == me)
                 ret ++;
         }
+    free(ships.ships);
     return ret;
 }
 
