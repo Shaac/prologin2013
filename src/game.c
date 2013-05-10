@@ -43,6 +43,9 @@ static void game_age_1(void)
         }
     }
 
+    if (score(other) == 0)
+        return;
+
     // Galleons movement phase.
     for (int i = 0; i < fleet_galleons_number; i++) {
         struct Ship ship = api_get_ship(fleet_galleons[i]);
