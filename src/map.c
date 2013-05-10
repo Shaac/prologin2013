@@ -145,8 +145,11 @@ void map_go_to(struct Ship ship, struct Position pos)
         int dx = pos.x - ship.pos.x;
         int dy = pos.y - ship.pos.y;
         if (abs(dx) > movement) {
-            dx = pos.x > ship.pos.x ? movement : -movement;
-            dy = 0;
+            if (abs(dy) >= movement / 2) {
+                dx = pos.x > ship.pos.x ? movement / 2 : -movement / 2;
+                dy = pos.y > ship.pos.y ? movement / 2 : -movement / 2;
+            } else
+                dx = pos.x > ship.pos.x ? movement - abs(dy) : abs(dy) - movement;
         } else
             dy = pos.y > ship.pos.y ? movement - abs(dx) : abs(dx) - movement;
         struct Position p = {ship.pos.x + dx, ship.pos.y + dy};
@@ -156,6 +159,7 @@ void map_go_to(struct Ship ship, struct Position pos)
 
 void map_move_to_front(struct Ship ship)
 {
+    // See if we can attack.
     int max = 0;
     struct Position p = {-1, -1};
     FOR_i_j_IN_SURROUNDING(ship.pos.x, ship.pos.y, GALLEON_MOVEMENT)
@@ -166,6 +170,8 @@ void map_move_to_front(struct Ship ship)
             }
     if (p.x != -1)
         map_go_to(ship, p);
+
+    // If not, go near the enemy.
     else {
         // TODO make this better
         for (int i = 0; i < FIELD_SIZE; i++)
