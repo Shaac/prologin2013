@@ -1,6 +1,7 @@
 #include "game.h"
 #include "map.h"
 #include "fleet.h"
+#include "movements.h"
 #include "api.h"
 
 #ifdef VERBOSE
@@ -36,10 +37,10 @@ static void game_age_1(void)
         if (ship.movable) {
             struct Position p = map_get_closest_isle(ship.pos, NO_OWNER);
             if (p.x != -1) {
-                map_go_to(ship, p);
+                movements_go_to(ship, p);
                 api_colonize(p);
             } else
-                map_flee(ship);
+                movements_flee(ship);
         }
     }
 
@@ -50,7 +51,7 @@ static void game_age_1(void)
     for (int i = 0; i < fleet_galleons_number; i++) {
         struct Ship ship = api_get_ship(fleet_galleons[i]);
         if (ship.movable) {
-            map_move_to_front(ship);
+            movements_move_to_front(ship);
         }
     }
 }

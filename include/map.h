@@ -6,7 +6,22 @@
 extern int             map_isles_number; /**< Number of isles and volcanos. */
 extern struct Position *map_isles;       /**< Their position on the map. */
 extern int             **map_danger;     /**< Number of menacing ships. */
-extern int             **map_proximity;  /**< Same, with isles counting. */
+extern int             **map_proximity;  /**< Same, with isles & caravels. */
+extern bool            **map_positions;  /**< Where are ennemies things. */
+
+/**
+ * @brief Sorry for this ugly macro. Go through each surrounding of a position.
+ *
+ * @param x The position.
+ * @param y The position,
+ * @param r The radius.
+ */
+#define FOR_i_j_IN_SURROUNDING(x, y, r) \
+    for (int i = ((x) < (r) ? 0 : (x) - (r)); \
+            i <= ((x) >= FIELD_SIZE - (r) ? FIELD_SIZE - 1 : (x) + (r)); i++) \
+for (int j = ((y) < (r) ? 0 : (y) - (r)); \
+        j <= ((y) >= FIELD_SIZE - (r) ? FIELD_SIZE - 1 : (y) + (r)); j++) \
+if (abs(i - (x)) + abs(j - (y)) <= (r))
 
 /**
  * @brief Init the map structures and make some pre calculations.
@@ -38,17 +53,5 @@ int map_undicovered_number(void);
  * @return The position of the closest isle.
  */
 struct Position map_get_closest_isle(struct Position pos, int id);
-
-/**
- * @brief Go to the direction of a given position.
- *
- * @param ship The ship to move.
- * @param pos  The postion to move to.
- */
-void map_go_to(struct Ship ship, struct Position pos);
-
-void map_move_to_front(struct Ship ship);
-
-void map_flee(struct Ship ship);
 
 #endif // __MAP_H__

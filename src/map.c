@@ -10,8 +10,9 @@
 int map_isles_number;
 struct Position *map_isles;
 
-int **map_danger;
-int **map_proximity;
+int  **map_danger;
+int  **map_proximity;
+bool **map_positions;
 
 static const int ISLE_PROXIMITY = 2 * GALLEON_MOVEMENT;
 
@@ -39,20 +40,6 @@ static int map_get_owner_id(int x, int y, enum Ship_type type)
     return ret;
 }
 
-/**
- * @brief Sorry for this ugly macro. Go through each surrounding of a position.
- *
- * @param x The position.
- * @param y The position,
- * @param r The radius.
- */
-#define FOR_i_j_IN_SURROUNDING(x, y, r) \
-    for (int i = ((x) < (r) ? 0 : (x) - (r)); \
-            i <= ((x) >= FIELD_SIZE - (r) ? FIELD_SIZE - 1 : (x) + (r)); i++) \
-for (int j = ((y) < (r) ? 0 : (y) - (r)); \
-        j <= ((y) >= FIELD_SIZE - (r) ? FIELD_SIZE - 1 : (y) + (r)); j++) \
-if (abs(i - (x)) + abs(j - (y)) <= (r))
-
 void map_init()
 {
     // TODO use the APi functions instead
@@ -73,20 +60,26 @@ void map_init()
     map_proximity = malloc(FIELD_SIZE * sizeof(int *));
     for (int i = 0; i < FIELD_SIZE; i ++)
         map_proximity[i] = malloc(FIELD_SIZE * sizeof(int));
+    map_positions = malloc(FIELD_SIZE * sizeof(bool *));
+    for (int i = 0; i < FIELD_SIZE; i ++)
+        map_positions[i] = malloc(FIELD_SIZE * sizeof(bool));
 }
 
 void map_refresh()
 {
     // Compute the danger matrix.
-    for (int i = 0; i < FIELD_SIZE; i++)
+    for (int i = 0; i < FIELD_SIZE; i++) {
         memset(map_danger[i], 0, FIELD_SIZE * sizeof(int));
+        for (int j = 0; j < FIELD_SIZE; j++)
+            map_positions[i][j] = false;
+    }
     for (int x = 0; x < FIELD_SIZE; x++)
         for (int y = 0; y < FIELD_SIZE; y++) {
             int owner = map_get_owner_id(x, y, SHIP_GALLEON);
             if (owner != NO_OWNER && owner != me) {
                 FOR_i_j_IN_SURROUNDING(x, y, GALLEON_MOVEMENT)
                     map_danger[i][j]++;
-                map_danger[x][y] += 100;
+                map_positions[x][y] = true;
             }
         }
 
@@ -95,17 +88,21 @@ void map_refresh()
         memcpy(map_proximity[i], map_danger[i], FIELD_SIZE * sizeof(int));
     for (int k = 0; k < map_isles_number; k++) {
         int owner = api_isle_owner(map_isles[k]);
-        if (owner != NO_OWNER && owner != me)
+        if (owner != NO_OWNER && owner != me) {
             FOR_i_j_IN_SURROUNDING(map_isles[k].x, map_isles[k].y,
                     ISLE_PROXIMITY)
                 map_proximity[i][j]++;
+            map_positions[map_isles[k].x][map_isles[k].y] = true;
+        }
     }
     for (int x = 0; x < FIELD_SIZE; x++)
         for (int y = 0; y < FIELD_SIZE; y++) {
             int owner = map_get_owner_id(x, y, SHIP_CARAVEL);
-            if (owner != NO_OWNER && owner != me)
+            if (owner != NO_OWNER && owner != me) {
                 FOR_i_j_IN_SURROUNDING(x, y, CARAVEL_MOVEMENT)
                     map_danger[i][j]++;
+                map_positions[x][y] = true;
+            }
         }
 }
 
@@ -135,86 +132,4 @@ struct Position map_get_closest_isle(struct Position pos, int id) {
             }
         }
     return ret;
-}
-
-void map_go_to(struct Ship ship, struct Position pos)
-{
-    if (api_move(ship.id, pos) != OK) {
-        int movement = ship.type == SHIP_GALLEON ? GALLEON_MOVEMENT :
-            CARAVEL_MOVEMENT;
-        int dx = pos.x - ship.pos.x;
-        int dy = pos.y - ship.pos.y;
-        if (abs(dx) > movement) {
-            if (abs(dy) >= movement / 2) {
-                dx = pos.x > ship.pos.x ? movement / 2 : -movement / 2;
-                dy = pos.y > ship.pos.y ? movement / 2 : -movement / 2;
-            } else
-                dx = pos.x > ship.pos.x ? movement - abs(dy) : abs(dy) - movement;
-        } else
-            dy = pos.y > ship.pos.y ? movement - abs(dx) : abs(dx) - movement;
-        struct Position p = {ship.pos.x + dx, ship.pos.y + dy};
-        api_move(ship.id, p);
-    }
-}
-
-static int map_force(int x, int y, bool mine)
-{
-    int ret = 0;
-    struct Ship_array ships = api_ship_list(x, y);
-    for (unsigned int i = 0; i < ships.length; i ++)
-        if (ships.ships[i].type == SHIP_GALLEON) {
-            if (mine && ships.ships[i].movable)
-                ret++;
-            if (!mine && ships.ships[i].player == other)
-                ret++;
-            if (!mine && ships.ships[i].player == me)
-                ret--;
-        }
-    return ret;
-}
-
-void map_move_to_front(struct Ship ship)
-{
-    // See if we can attack.
-    int force = map_force(ship.pos.x, ship.pos.y, true);
-    struct Position p = {-1, -1};
-    FOR_i_j_IN_SURROUNDING(ship.pos.x, ship.pos.y, GALLEON_MOVEMENT) {
-        int ennemies = map_force(i, j, false); // TODO optimize
-        if (ennemies > 0 && force > ennemies) {
-            p = (struct Position) {i, j};
-        }
-    }
-    if (p.x != -1) {
-        map_go_to(ship, p);
-        return;
-    }
-
-    // If not, go near the ennemy.
-    // TODO make this better
-    for (int diff = 1; diff < FIELD_SIZE * FIELD_SIZE; diff++)
-        for (int dx = -diff; dx <= diff; dx++)
-            for (int dy = abs(dx) - diff; true; dy += 2 * (diff - abs(dx))) {
-                p = (struct Position) {ship.pos.x + dx, ship.pos.y + dy};
-                if (p.x >= 0 && p.y >= 0 && p.x < FIELD_SIZE && p.y <
-                        FIELD_SIZE)
-                    if (map_get_owner_id(p.x, p.y, SHIP_GALLEON) == other  ||
-                            map_get_owner_id(p.x, p.y, SHIP_CARAVEL) == other ||
-                            api_isle_owner(p) == other) {
-                        map_go_to(ship, p);
-                        return;
-                    }
-                if (dy == diff - abs(dx))
-                    break;
-            }
-}
-
-void map_flee(struct Ship ship)
-{
-    int r = ship.type == SHIP_GALLEON ? GALLEON_MOVEMENT : CARAVEL_MOVEMENT;
-    FOR_i_j_IN_SURROUNDING(ship.pos.x, ship.pos.y, r)
-        if (!map_danger[i][j]) {
-            struct Position p = {i, j};
-            map_go_to(ship, p);
-            return;
-        }
 }
