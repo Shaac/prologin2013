@@ -143,9 +143,6 @@ struct Position map_get_closest_isle(struct Position pos, int id) {
 
 void map_go_to(struct Ship ship, struct Position pos)
 {
-#ifdef VERBOSE
-    printf("%d, %d to %d, %d\n", ship.pos.x, ship.pos.y, pos.x, pos.y);
-#endif // VERBOSE
     if (api_move(ship.id, pos) != OK) {
         int movement = ship.type == SHIP_GALLEON ? GALLEON_MOVEMENT :
             CARAVEL_MOVEMENT;
@@ -179,7 +176,15 @@ void map_move_to_front(struct Ship ship)
                     max = map_proximity[i][j];
                     p = (struct Position) {i, j};
                 }
-    printf("%d\n", max);
     if (p.x != -1)
         map_go_to(ship, p);
+    else {
+        // TODO make this better
+        for (int i = 0; i < FIELD_SIZE; i++)
+            for (int j = 0; j < FIELD_SIZE; j++)
+                if (map_get_owner_id(i, j, SHIP_GALLEON) == other) {
+                    p = (struct Position) {i, j};
+                    map_go_to(ship, p);
+                }
+    }
 }
