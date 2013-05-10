@@ -52,6 +52,6 @@ int map_undicovered_number(void);
  *
  * @return The position of the closest isle.
  */
-struct Position map_get_closest_isle(struct Position pos, int id);
+struct Position map_get_closest_isle(struct Position pos, int id, int cash);
 
 #endif // __MAP_H__

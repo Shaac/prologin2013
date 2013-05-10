@@ -18,42 +18,62 @@ static int age = 1; /**< There are different ages (steps) through the game. */
  */
 static void game_age_1(void)
 {
+    // Caravel movement phase.
+    // TODO improve this drafty isles attribution.
+    for (int i = 0; i < fleet_caravels_number; i++) {
+        struct Ship ship = api_get_ship(fleet_caravels[i]);
+        if (ship.movable) {
+            struct Position p;
+            if (ship.gold) {
+                api_load(ship.id);
+                p = map_get_closest_isle(ship.pos, me, -1);
+            } else
+                p = map_get_closest_isle(ship.pos, NO_OWNER, 0);
+            if (p.x != -1) {
+                movements_go_to(ship, p);
+                api_colonize(p);
+                api_unload(ship.id);
+            }
+        }
+    }
+    struct Position help = {-1, -1};
+    for (int i = 0; i < fleet_caravels_number; i++) {
+        struct Ship ship = api_get_ship(fleet_caravels[i]);
+        if (ship.movable) {
+            struct Position p = map_get_closest_isle(ship.pos, me, 1);
+            if (p.x != -1 && help.x == -1) {
+                movements_go_to(ship, p);
+                ship = api_get_ship(fleet_caravels[i]);
+                if (ship.pos.x == p.x && ship.pos.y == p.y) {
+                    api_load(ship.id);
+                    if (map_danger[p.x][p.y])
+                        help = p;
+                }
+            } else
+                movements_flee(ship);
+        }
+    }
+
+    // Galleons movement phase.
+    for (int i = 0; i < fleet_galleons_number; i++) {
+        struct Ship ship = api_get_ship(fleet_galleons[i]);
+        if (ship.movable) {
+            if (!(help.x != -1 && api_move(ship.id, help) == OK))
+                movements_move_to_front(ship);
+        }
+    }
+
     // Construction phase.
     int undicovered = map_undicovered_number();
     for (int i = 0; i < map_isles_number; i++)
         if (api_isle_owner(map_isles[i]) == me) {
             if (map_proximity[map_isles[i].x][map_isles[i].y] ||
                     fleet_caravels_number > undicovered / 2 ||
-                    fleet_caravels_number > fleet_galleons_number)
+                    fleet_caravels_number > fleet_galleons_number + 3)
                 while (fleet_add_galleon(map_isles[i])) ;
             else
                 while (fleet_add_caravel(map_isles[i])) ;
         }
-
-    // Caravel movement phase.
-    // TODO improve this drafty isles attribution.
-    for (int i = 0; i < fleet_caravels_number; i++) {
-        struct Ship ship = api_get_ship(fleet_caravels[i]);
-        if (ship.movable) {
-            struct Position p = map_get_closest_isle(ship.pos, NO_OWNER);
-            if (p.x != -1) {
-                movements_go_to(ship, p);
-                api_colonize(p);
-            } else
-                movements_flee(ship);
-        }
-    }
-
-    if (score(other) == 0)
-        return;
-
-    // Galleons movement phase.
-    for (int i = 0; i < fleet_galleons_number; i++) {
-        struct Ship ship = api_get_ship(fleet_galleons[i]);
-        if (ship.movable) {
-            movements_move_to_front(ship);
-        }
-    }
 }
 
 /**

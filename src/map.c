@@ -119,12 +119,15 @@ int map_undicovered_number()
     return ret;
 }
 
-struct Position map_get_closest_isle(struct Position pos, int id) {
+struct Position map_get_closest_isle(struct Position pos, int id, int cash) {
     int min = FIELD_SIZE * FIELD_SIZE;
     struct Position ret = {-1, -1};
     for (int i = 0; i < map_isles_number; i ++)
-        if (api_isle_owner(map_isles[i]) == id &&
-                !map_danger[map_isles[i].x][map_isles[i].y]) {
+        if (api_isle_owner(map_isles[i]) == id && (cash >= 0 || api_field_info(
+                        map_isles[i].x, map_isles[i].y) == FIELD_ISLE) &&
+                (cash > 0 ? api_gold(map_isles[i]) >= cash && api_field_info
+                 (map_isles[i].x, map_isles[i].y) == FIELD_VOLCANO
+                 : !map_danger[map_isles[i].x][map_isles[i].y])) {
             int d = api_distance(map_isles[i], pos);
             if (d < min) {
                 min = d;

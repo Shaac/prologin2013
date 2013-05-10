@@ -111,4 +111,16 @@ static inline erreur api_colonize(struct Position pos)
     return coloniser((position) {pos.x, pos.y});
 }
 
+static inline int api_gold(struct Position pos) {
+    return info_ile_or((position) {pos.x, pos.y});
+}
+
+static inline void api_load(int id) {
+    while (charger(id, 1) == OK) ;
+}
+
+static inline void api_unload(int id) {
+    while (decharger(id, 1) == OK) ;
+}
+
 #endif // __API_H__
