@@ -30,7 +30,7 @@ static const int ISLE_PROXIMITY = 2 * GALLEON_MOVEMENT;
 /**
  * @brief Get the id of the owner of a case, in a military way: the owner is
  * the player with galleons on it. Can also work with only caravels instead
- * of galeons.
+ * of galleons.
  *
  * @param x    The position.
  * @param y    The position.
@@ -38,8 +38,9 @@ static const int ISLE_PROXIMITY = 2 * GALLEON_MOVEMENT;
  *
  * @return The id of the owner, NO_OWNER if none.
  */
-int map_get_owner_id(int x, int y, enum Ship_type type)
+static int map_get_owner_id(int x, int y, enum Ship_type type)
 {
+    // TODO The tricky case where there are caravels from both sides.
     struct Ship_array ships = api_ship_list(x, y);
     int ret = NO_OWNER;
     for (unsigned int i = 0; i < ships.length; i ++)
@@ -53,7 +54,7 @@ int map_get_owner_id(int x, int y, enum Ship_type type)
 
 void map_init()
 {
-    // TODO use the APi functions instead
+    // TODO use the API functions instead
     struct Position buffer [FIELD_SIZE * FIELD_SIZE];
     map_isles_number = 0;
     for (int x = 0; x < FIELD_SIZE; x++)
@@ -128,6 +129,7 @@ int map_undiscovered_number()
 }
 
 struct Position map_get_closest_isle(struct Position pos, int id, int cash) {
+    // TODO This function is a bit ugly.
     int min = FIELD_SIZE * FIELD_SIZE;
     struct Position ret = {-1, -1};
     for (int i = 0; i < map_isles_number; i ++)

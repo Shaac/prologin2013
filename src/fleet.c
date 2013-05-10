@@ -75,4 +75,5 @@ void fleet_construct_ships()
             else
                 fleet_add_caravel(map_isles[i]);
         }
+    // TODO May be out of caravels.
 }
