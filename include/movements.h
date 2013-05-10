@@ -29,7 +29,7 @@ int movements_force(int x, int y, int mode);
 
 void movements_retreive_gold(void);
 
-void movements_discover(void);
+void movements_discover(int d);
 
 void movements_get_volcano_gold(int cash);
 
