@@ -134,13 +134,13 @@ void movements_discover()
     }
 }
 
-void movements_get_volcano_gold()
+void movements_get_volcano_gold(int cash)
 {
     help = (struct Position) {-1, -1};
     for (int i = 0; i < fleet_caravels_number; i++) {
         struct Ship ship = api_get_ship(fleet_caravels[i]);
         if (ship.movable) {
-            struct Position p = map_get_closest_isle(ship.pos, me, 1);
+            struct Position p = map_get_closest_isle(ship.pos, me, cash);
             if (p.x != -1 && help.x == -1) {
                 movements_go_to(ship, p);
                 ship = api_get_ship(fleet_caravels[i]);
@@ -149,11 +149,13 @@ void movements_get_volcano_gold()
                     if (map_danger[p.x][p.y])
                         help = p;
                 }
-            } else
-                movements_flee(ship);
+                if (cash > 1)
+                    return;
+            }
         }
     }
 }
+// TODO movements_flee(ship);
 
 void movements_move_galleons()
 {

@@ -31,7 +31,7 @@ void movements_retreive_gold(void);
 
 void movements_discover(void);
 
-void movements_get_volcano_gold(void);
+void movements_get_volcano_gold(int cash);
 
 void movements_move_galleons(void);
 
