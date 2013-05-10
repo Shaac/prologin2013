@@ -55,11 +55,13 @@ static void game_age_1(void)
     }
 
     // Galleons movement phase.
-    for (int i = 0; i < fleet_galleons_number; i++) {
-        struct Ship ship = api_get_ship(fleet_galleons[i]);
-        if (ship.movable) {
-            if (!(help.x != -1 && api_move(ship.id, help) == OK))
-                movements_move_to_front(ship);
+    if (score(other)) {
+        for (int i = 0; i < fleet_galleons_number; i++) {
+            struct Ship ship = api_get_ship(fleet_galleons[i]);
+            if (ship.movable) {
+                if (!(help.x != -1 && api_move(ship.id, help) == OK))
+                    movements_move_to_front(ship);
+            }
         }
     }
 
