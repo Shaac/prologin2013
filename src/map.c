@@ -110,7 +110,7 @@ void map_clean() {
     free(map_isles);
 }
 
-int map_undicovered_number()
+int map_undiscovered_number()
 {
     int ret = 0;
     for (int i = 0; i < map_isles_number; i++)

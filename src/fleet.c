@@ -1,6 +1,10 @@
+#include <stdbool.h>
+
+#include "fleet.h"
+
 #include "api.h"
-#include "map.h"
 #include "game.h"
+#include "map.h"
 
 int fleet_galleons_number = 0;
 int fleet_caravels_number = 0;
@@ -24,7 +28,12 @@ static int fleet_purge(int array [], int size)
     return last_id;
 }
 
-bool fleet_add_galleon(struct Position pos)
+/**
+ * @brief Construct a galleon and take note of it.
+ *
+ * @return Whether it succeded or not.
+ */
+static bool fleet_add_galleon(struct Position pos)
 {
     if (api_construct(SHIP_GALLEON, pos) == OK) {
         fleet_galleons[fleet_galleons_number++] = api_last_id();
@@ -33,7 +42,12 @@ bool fleet_add_galleon(struct Position pos)
     return false;
 }
 
-bool fleet_add_caravel(struct Position pos)
+/**
+ * @brief Construct a caravel and take note of it.
+ *
+ * @return Whether it succeded or not.
+ */
+static bool fleet_add_caravel(struct Position pos)
 {
     if (api_construct(SHIP_CARAVEL, pos) == OK) {
         fleet_caravels[fleet_caravels_number++] = api_last_id();
@@ -50,14 +64,15 @@ void fleet_refresh()
 
 void fleet_construct_ships()
 {
-    int undicovered = map_undicovered_number();
+    int undiscovered = map_undiscovered_number();
     for (int i = 0; i < map_isles_number; i++)
         if (api_isle_owner(map_isles[i]) == me) {
+            // TODO Reviez this arbitory conditions.
             if (map_proximity[map_isles[i].x][map_isles[i].y] ||
-                    fleet_caravels_number > undicovered / 2 ||
+                    fleet_caravels_number > undiscovered / 2 ||
                     fleet_caravels_number > fleet_galleons_number + 3)
                 while (fleet_add_galleon(map_isles[i])) ;
             else
-                while (fleet_add_caravel(map_isles[i])) ;
+                fleet_add_caravel(map_isles[i]);
         }
 }

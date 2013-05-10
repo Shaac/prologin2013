@@ -43,7 +43,7 @@ void map_clean(void);
  *
  * @return The number of undiscovered isles.
  */
-int map_undicovered_number(void);
+int map_undiscovered_number(void);
 
 /**
  * @brief Get the closest isle from a specifier player.
