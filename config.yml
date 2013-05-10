@@ -3,7 +3,7 @@ map: ./simple.map
 verbose: 3
 clients:
   - ./champion.so
-  - /goinfre/pole3.so
+  - /goinfre/pole3.2.so
 spectators:
   - /usr/local/gui/gui.so
 names:
