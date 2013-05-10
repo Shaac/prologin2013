@@ -6,6 +6,8 @@
 
 #ifdef VERBOSE
 #include <stdio.h>
+#else
+#define printf(...) (void) 42;
 #endif // VERBOSE
 
 int me;

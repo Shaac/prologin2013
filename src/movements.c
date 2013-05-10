@@ -67,7 +67,7 @@ void movements_move_to_front(struct Ship ship)
 
     // If not, go near the ennemy.
     // TODO make this better
-    for (int diff = 1; diff < FIELD_SIZE * FIELD_SIZE; diff++)
+    for (int diff = 1; diff < 2 * FIELD_SIZE; diff++)
         for (int dx = -diff; dx <= diff; dx++)
             for (int dy = abs(dx) - diff; true; dy += 2 * (diff - abs(dx))) {
                 p = (struct Position) {ship.pos.x + dx, ship.pos.y + dy};
