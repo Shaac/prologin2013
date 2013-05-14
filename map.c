@@ -106,7 +106,7 @@ void map_refresh()
             int owner = map_get_owner_id(x, y, SHIP_CARAVEL);
             if (owner != NO_OWNER && owner != me) {
                 FOR_i_j_IN_SURROUNDING(x, y, CARAVEL_MOVEMENT)
-                    map_danger[i][j]++;
+                    map_proximity[i][j]++;
                 map_positions[x][y] = true;
             }
         }
